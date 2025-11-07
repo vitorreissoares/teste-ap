@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="icone.png" type="image/png">
+    <title>Dashboard de Análise</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Variáveis de Design (Estilo profissional) --- */
+        :root {
+            --sidebar-width-desktop: 260px;
+            --header-height-mobile: 60px;
+            
+            --color-primary: #2563eb; /* Azul profissional */
+            --color-primary-light: #dbeafe;
+            --color-text-primary: #111827; /* Grafite escuro */
+            --color-text-secondary: #4b5563;
+            --color-text-on-primary: #ffffff;
+            
+            --bg-body: #f3f4f6; /* Fundo do app (cinza claro) */
+            --bg-sidebar: #ffffff;
+            --bg-content: #ffffff;
+            --border-color: #e5e7eb; /* Cor da borda sutil */
+            
+            --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --card-radius: 0.75rem; /* 12px */
+        }
+
+        /* --- Reset e Estilos Globais --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--color-text-primary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 0.5rem; /* 8px */
+        }
+        
+        p {
+            line-height: 1.6;
+            color: var(--color-text-secondary);
+        }
+        
+        h2, h3, h4 {
+            font-weight: 600;
+        }
+
+        /* --- Layout Principal (Sidebar + Conteúdo) --- */
+        .app-layout {
+            display: flex;
+            flex-direction: column; /* Mobile-first: empilhado */
+        }
+
+        /* --- Sidebar (Navegação) --- */
+        .sidebar {
+            width: 100%;
+            background-color: var(--bg-sidebar);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.5rem;
+            
+            /* Fixo no topo em mobile */
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            display: none; /* Oculto em mobile */
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: row; /* Abas lado a lado em mobile */
+            overflow-x: auto; /* Permite rolar horizontalmente se não couber */
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Esconde scrollbar (Firefox) */
+        }
+        
+        .sidebar-nav::-webkit-scrollbar {
+            display: none; /* Esconde scrollbar (Chrome/Safari) */
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem; /* 12px 16px */
+            font-size: 0.9rem; /* 14px */
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            border-radius: 0.5rem; /* 8px */
+            transition: background-color 0.2s, color 0.2s;
+            cursor: pointer;
+            white-space: nowrap; /* Impede que o texto quebre a linha */
+            flex-shrink: 0; /* Impede que os itens encolham */
+        }
+        
+        .nav-item:hover {
+            background-color: var(--bg-body);
+            color: var(--color-text-primary);
+        }
+
+        .nav-item.active {
+            background-color: var(--color-primary-light);
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .nav-item-icon {
+            width: 1.25rem; /* 20px */
+            height: 1.25rem; /* 20px */
+            margin-right: 0.75rem; /* 12px */
+            flex-shrink: 0;
+        }
+        
+        /* Oculta ícones em mobile para economizar espaço */
+        @media (max-width: 1023px) {
+            .nav-item-icon {
+                display: none;
+            }
+            .nav-item {
+                justify-content: center;
+                flex-grow: 1;
+            }
+        }
+
+        /* --- Área de Conteúdo Principal --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 1.5rem; /* 24px */
+            width: 100%;
+        }
+        
+        .main-header {
+            margin-bottom: 1.5rem; /* 24px */
+        }
+
+        .main-header h2 {
+            font-size: 1.8rem; /* 28px */
+            color: var(--color-text-primary);
+        }
+
+        .main-header p {
+            font-size: 1rem; /* 16px */
+            color: var(--color-text-secondary);
+            margin-top: 0.25rem;
+        }
+        
+        /* Conteúdo de cada "aba" */
+        .tab-content {
+            display: none; /* Oculto por padrão */
+        }
+
+        /* --- Layout de Grid de Cards --- */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem; /* 24px */
+        }
+        
+        /* Card individual */
+        .card {
+            background-color: var(--bg-content);
+            border-radius: var(--card-radius);
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            overflow: hidden; /* Garante que o conteúdo respeite o radius */
+        }
+        
+        /* Cards que ocupam a largura total (Ex: Título da Página) */
+        .card.full-width {
+            grid-column: 1 / -1; /* Ocupa todas as colunas */
+        }
+
+        .card-header {
+            padding: 1rem 1.5rem; /* 16px 24px */
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .card-header h3 {
+            font-size: 1.125rem; /* 18px */
+            color: var(--color-text-primary);
+        }
+
+        .card-body {
+            padding: 1.5rem; /* 24px */
+        }
+        
+        .card-body h4 {
+            font-size: 1rem; /* 16px */
+            font-weight: 600;
+            margin-top: 1.25rem; /* 20px */
+            margin-bottom: 0.5rem; /* 8px */
+        }
+        
+        .card-body p {
+            margin-bottom: 1rem;
+        }
+
+        /* --- Estilo do Accordion (details) --- */
+        .accordion-item {
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem; /* 8px */
+            margin-bottom: 1rem;
+            background-color: #fafafa;
+        }
+        
+        .accordion-item[open] {
+            /* Sombra quando aberto, para dar "profundidade" */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+        }
+
+        .accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.25rem; /* 16px 20px */
+            font-size: 1rem; /* 16px */
+            font-weight: 600;
+            cursor: pointer;
+            list-style: none; /* Remove marcador padrão */
+        }
+        
+        .accordion-header::-webkit-details-marker {
+            display: none;
+        }
+        
+        /* Seta do Accordion */
+        .accordion-header::after {
+            content: '+';
+            font-size: 1.5rem; /* 24px */
+            font-weight: 400;
+            color: var(--color-text-secondary);
+            transform: rotate(0);
+            transition: transform 0.2s ease;
+        }
+        
+        .accordion-item[open] > .accordion-header::after {
+            content: '−';
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            padding: 1.5rem; /* 24px */
+            border-top: 1px solid var(--border-color);
+            background-color: var(--bg-content);
+        }
+        
+        /* Estilo para Nível 1 (Plataforma) */
+        .accordion-plataforma > .accordion-header {
+            background-color: #f9f9f9;
+            font-size: 1.1rem;
+        }
+
+        /* --- Footer --- */
+        .footer {
+            margin-top: 2rem;
+            padding: 2rem 1.5rem; /* 32px 24px */
+            background-color: var(--bg-content);
+            border-top: 1px solid var(--border-color);
+            color: var(--color-text-secondary);
+            font-size: 0.875rem; /* 14px */
+            
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            text-align: center;
+        }
+        
+        .footer-info p { margin: 0.25rem 0; }
+        .footer-info .cargo { font-style: italic; }
+
+        .footer-links a {
+            color: var(--color-text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0 0.5rem;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover {
+            color: var(--color-primary);
+        }
+
+
+        /* --- Layout Desktop (min-width: 1024px) --- */
+        @media (min-width: 1024px) {
+            .app-layout {
+                flex-direction: row; /* Lado a lado */
+            }
+
+            .sidebar {
+                width: var(--sidebar-width-desktop);
+                height: 100vh; /* Ocupa 100% da altura */
+                position: fixed; /* Fixo na lateral */
+                top: 0;
+                left: 0;
+                border-bottom: none;
+                border-right: 1px solid var(--border-color);
+                padding: 1rem;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .sidebar-header {
+                display: block;
+                font-size: 1.5rem; /* 24px */
+                font-weight: 700;
+                padding: 1rem 0.5rem 1.5rem 0.5rem;
+                color: var(--color-text-primary);
+                /* Você pode colocar um logo aqui */
+                /* Ex: <img src="logo.svg" alt="Logo"> */
+            }
+
+            .sidebar-nav {
+                flex-direction: column; /* Empilhado verticalmente */
+                overflow-x: hidden;
+                overflow-y: auto;
+                flex-grow: 1; /* Ocupa espaço disponível */
+            }
+
+            .nav-item {
+                font-size: 0.95rem; /* 15px */
+                padding: 0.8rem 1rem; /* 13px 16px */
+                margin-bottom: 0.25rem;
+            }
+            
+            /* Mostra ícones no desktop */
+            .nav-item-icon {
+                display: block;
+            }
+
+            .main-content {
+                /* Empurra o conteúdo para depois da sidebar */
+                margin-left: var(--sidebar-width-desktop);
+                width: calc(100% - var(--sidebar-width-desktop));
+                padding: 2rem; /* 32px */
+            }
+            
+            .footer {
+                flex-direction: row;
+                justify-content: space-between;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-layout">
+        
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                Análise de Mídia
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a class="nav-item active" data-target="Categoria0">
+                    <svg class="nav-item-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
+                    Início
+                </a>
+                <a class="nav-item" data-target="Categoria1">
+                    <svg class="nav-item-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25C3.504 21 3 20.496 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25c-.621 0-1.125-.504-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25c-.621 0-1.125-.504-1.125-1.125V4.125Z" /></svg>
+                    Análise de Conteúdo
+                </a>
+                <a class="nav-item" data-target="Categoria2">
+                    <svg class="nav-item-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9 9.75h.008v.008H9v-.008Zm6 0h.008v.008H15v-.008Z" /></svg>
+                    Análise de Sentimentos
+                </a>
+                <a class="nav-item" data-target="Categoria3">
+                    <svg class="nav-item-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 11.25-7.5 7.5-7.5-7.5m15 4.5-7.5 7.5-7.5-7.5" /></svg>
+                    Radar da Liderança
+                </a>
+                <a class="nav-item" data-target="Categoria4">
+                    <svg class="nav-item-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                    Avaliação Técnica
+                </a>
+            </nav>
+            
+            </aside>
+
+        <main class="main-content">
+            <header class="main-header">
+                <h2>Relatório Fulano - Janeiro 2025</h2>
+                <p>Análise de posicionamento e percepção de marca humana.</p>
+            </header>
+
+            <section id="Categoria0" class="tab-content" style="display: block;">
+                
+                <div class="card-grid">
+                    <div class="card full-width">
+                        <div class="card-header">
+                            <h3>As Marcas Humanas na Política</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>As marcas humanas na política são (...) Os 03 conceitos fundamentais para o sucesso do líder político são (...)</p>
+                            <img src="pic.jpg" alt="Imagem da Categoria 0" loading="lazy">
+                        </div>
+                    </div>
+                    
+                    <div class="card full-width">
+                        <div class="card-header">
+                             <h3>Nome do Candidato</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Introdução sobre o candidato (...)</p>
+                            <p>Quantidade de postagens analisadas, plataformas (Instagram, Facebook, Twitter, TikTok e Youtube) e período analisado (...)</p> 
+                        </div>
+                    </div>
+                </div>
+                
+            </section>
+
+            <section id="Categoria1" class="tab-content">
+                
+                <div class="card full-width">
+                    <div class="card-header"><h3>Análise de Conteúdo</h3></div>
+                    <div class="card-body">
+                        <p>A Análise de conteúdo é (...) e nesta seção focamos nas seguintes plataformas:</p>
+                    </div>
+                </div>
+                
+                <details class="accordion-item accordion-plataforma open"> <summary class="accordion-header">Instagram</summary>
+                    <div class="accordion-content">
+                        
+                        <div class="card-grid">
+                            <div class="card">
+                                <div class="card-header"><h3>Distribuição por Categoria</h3></div>
+                                <div class="card-body">
+                                    <p>Gráfico: Distribuição de postagens por categoria</p>
+                                    <img src="pic.jpg" alt="Distribuição de postagens" loading="lazy">
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header"><h3>Análise de Comentários</h3></div>
+                                <div class="card-body">
+                                    <p>Gráfico: Número de comentários por categoria (Dispersão)</p>
+                                    <img src="pic.jpg" alt="Comentários por categoria" loading="lazy">
+                                    
+                                    <h4>1ª mais comentada - Autenticidade</h4>
+                                    <img src="pic.jpg" alt="Post Autenticidade" loading="lazy">
+                                    <p>Por que foi mais comentada - Autenticidade</p>
+                                    
+                                    <h4>1ª mais comentada - Competência</h4>
+                                    <img src="pic.jpg" alt="Post Competência" loading="lazy">
+                                    <p>Por que foi mais comentada - Competência</p>
+                                    
+                                    <h4>1ª mais comentada - Humanização</h4>
+                                    <img src="pic.jpg" alt="Post Humanização" loading="lazy">
+                                    <p>Por que foi mais comentada - Humanização</p>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header"><h3>Análise de Curtidas</h3></div>
+                                <div class="card-body">
+                                    <p>Gráfico: Número de curtidas por categoria (Dispersão)</p>
+                                    <img src="pic.jpg" alt="Curtidas por categoria" loading="lazy">
+
+                                    <h4>1ª mais curtida - Autenticidade</h4>
+                                    <img src="pic.jpg" alt="Post Autenticidade" loading="lazy">
+                                    <p>Por que foi mais curtida - Autenticidade</p>
+                                    
+                                    <h4>1ª mais curtida - Competência</h4>
+                                    <img src="pic.jpg" alt="Post Competência" loading="lazy">
+                                    <p>Por que foi mais curtida - Competência</p>
+                                    
+                                    <h4>1ª mais curtida - Humanização</h4>
+                                    <img src="pic.jpg" alt="Post Humanização" loading="lazy">
+                                    <p>Por que foi mais curtida - Humanização</p>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header"><h3>Análise de Discurso</h3></div>
+                                <div class="card-body">
+                                    <p>Explicar (...)</p>
+                                    <p>Gráfico: Nuvem de palavras 1</p>
+                                    <img src="pic.jpg" alt="Nuvem de Palavras 1" loading="lazy">
+                                    <p>Comentário sobre a nuvem de palavras 1</p>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header"><h3>Comportamento da Audiência</h3></div>
+                                <div class="card-body">
+                                    <p>Explicar (...)</p>
+                                    <p>Gráfico: Nuvem de palavras 2</p>
+                                    <img src="pic.jpg" alt="Nuvem de Palavras 2" loading="lazy">
+                                    <p>Comentário sobre a nuvem de palavras 2</p>
+                                </div>
+                            </div>
+                            
+                        </div></div> 
+                </details>
+                
+            </section>
+                
+            <section id="Categoria2" class="tab-content">
+                <div class="card full-width">
+                    <div class="card-header"><h3>Análise de Sentimentos</h3></div>
+                    <div class="card-body"><p>A Análise de sentimentos é (...)</p></div>
+                </div>
+
+                <details class="accordion-item accordion-plataforma open">
+                    <summary class="accordion-header">Instagram</summary>
+                    <div class="accordion-content">
+                        
+                        <div class="card full-width">
+                            <div class="card-header"><h3>Comportamento da Audiência (Série Histórica)</h3></div>
+                            <div class="card-body">
+                                <img src="pic.jpg" alt="Série histórica de sentimentos" loading="lazy">
+                                <p>Explicação breve(...)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="card-grid">
+                            <div class="card">
+                                <div class="card-header"><h3>Confiança</h3></div>
+                                <div class="card-body">
+                                    <h4>Maior confiança</h4>
+                                    <img src="pic.jpg" alt="Maior confiança" loading="lazy"><p>Explicação</p>
+                                    <h4>Menor confiança</h4>
+                                    <img src="pic.jpg" alt="Menor confiança" loading="lazy"><p>Explicação</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header"><h3>Felicidade</h3></div>
+                                <div class="card-body">
+                                    <h4>Maior felicidade</h4>
+                                    <img src="pic.jpg" alt="Maior felicidade" loading="lazy"><p>Explicação</p>
+                                    <h4>Menor felicidade</h4>
+                                    <img src="pic.jpg" alt="Menor felicidade" loading="lazy"><p>Explicação</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header"><h3>Expectativa</h3></div>
+                                <div class="card-body">
+                                    <h4>Maior expectativa</h4>
+                                    <img src="pic.jpg" alt="Maior expectativa" loading="lazy"><p>Explicação</p>
+                                    <h4>Menor expectativa</h4>
+                                    <img src="pic.jpg" alt="Menor expectativa" loading="lazy"><p>Explicação</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header"><h3>Surpresa</h3></div>
+                                <div class="card-body">
+                                    <h4>Maior surpresa</h4>
+                                    <img src="pic.jpg" alt="Maior surpresa" loading="lazy"><p>Explicação</p>
+                                    <h4>Menor surpresa</h4>
+                                    <img src="pic.jpg" alt="Menor surpresa" loading="lazy"><p>Explicação</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header"><h3>Medo</h3></div>
+                                <div class="card-body">
+                                    <h4>Maior Medo</h4>
+                                    <img src="pic.jpg" alt="Maior Medo" loading="lazy"><p>Explicação</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header"><h3>Tristeza</h3></div>
+                                <div class="card-body">
+                                    <h4>Maior tristeza</h4>
+                                    <img src="pic.jpg" alt="Maior tristeza" loading="lazy"><p>Explicação</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header"><h3>Raiva</h3></div>
+                                <div class="card-body">
+                                    <h4>Maior raiva</h4>
+                                    <img src="pic.jpg" alt="Maior raiva" loading="lazy"><p>Explicação</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header"><h3>Repulsa</h3></div>
+                                <div class="card-body">
+                                    <h4>Maior repulsa</h4>
+                                    <img src="pic.jpg" alt="Maior repulsa" loading="lazy"><p>Explicação</p>
+                                </div>
+                            </div>
+                        </div></div> 
+                </details>
+            </section>
+            
+            <section id="Categoria3" class="tab-content">
+                <div class="card full-width">
+                    <div class="card-header"><h3>O Radar da Liderança Política</h3></div>
+                    <div class="card-body"><p>O que é o radar (...)</p></div>
+                </div>
+                
+                <details class="accordion-item accordion-plataforma open">
+                    <summary class="accordion-header">Instagram</summary>
+                    <div class="accordion-content"> 
+                        <div class="card-grid">
+                            <div class="card">
+                                <div class="card-header"><h3>O Radar da Marca Humana na Política</h3></div>
+                                <div class="card-body">
+                                    <img src="pic2.gif" alt="Radar da Marca Humana" loading="lazy">
+                                    <p>comentário sobre o radar (...)</p>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header"><h3>Indicador de Desempenho Político (IDPMS)</h3></div>
+                                <div class="card-body">
+                                    <img src="pic2.gif" alt="Indicador de Desempenho" loading="lazy">
+                                    <p>comentário sobre o indicador (...)</p>
+                                </div>
+                            </div>
+                        </div></div> 
+                </details>
+            </section>
+
+            <section id="Categoria4" class="tab-content">
+                <div class="card full-width">
+                    <div class="card-header"><h3>Avaliação Técnica</h3></div>
+                    <div class="card-body"><p>O que é a avaliação (...)</p></div>
+                </div>
+
+                <details class="accordion-item accordion-plataforma open">
+                    <summary class="accordion-header">Instagram</summary>
+                    <div class="accordion-content"> 
+                        <div class="card-grid">
+                            <div class="card">
+                                <div class="card-header"><h3>Análise Técnica</h3></div>
+                                <div class="card-body">
+                                    <p>Avaliação (...)</p>
+                                </div>
+                            </div>
+                        </div></div> 
+                </details>
+            </section>
+            
+            <footer class="footer">
+                <div class="footer-info">
+                    <p>Desenvolvido por: <strong>Vitor Reis Soares</strong></p>
+                    <p class="cargo">Especialista em Marketing Político</p>
+                </div>
+                <div class="footer-links">
+                    <a href="[#]" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+                    <a href="https://scholar.google.com/citations?user=0BSfm-wAAAAJ&hl=pt-BR&oi=ao" target="_blank" rel="noopener noreferrer">Google Scholar</a>
+                    <a href="[#]" target="_blank" rel="noopener noreferrer">Github</a>
+                </div>
+            </footer>
+            
+        </main> </div> <script>
+        // --- JavaScript Moderno e Limpo ---
+        
+        // Espera o DOM estar pronto para executar o script
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Seleciona todos os itens de navegação e abas de conteúdo
+            const navItems = document.querySelectorAll('.nav-item');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            // Adiciona um "ouvinte" de clique a CADA item da navegação
+            navItems.forEach(navItem => {
+                navItem.addEventListener('click', (event) => {
+                    event.preventDefault(); // Impede o link <a> de navegar
+                    
+                    // 1. Pega o ID do alvo (ex: "Categoria0") do atributo 'data-target'
+                    const targetId = navItem.getAttribute('data-target');
+                    
+                    // 2. Remove a classe 'active' de TODOS os itens da navegação
+                    navItems.forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // 3. Adiciona a classe 'active' APENAS ao item clicado
+                    navItem.classList.add('active');
+                    
+                    // 4. Esconde TODAS as abas de conteúdo
+                    tabContents.forEach(content => {
+                        content.style.display = 'none';
+                    });
+                    
+                    // 5. Mostra APENAS a aba de conteúdo correspondente ao ID
+                    const targetContent = document.getElementById(targetId);
+                    if (targetContent) {
+                        targetContent.style.display = 'block';
+                    }
+                    
+                    // 6. Rola a tela para o topo (útil em mobile)
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+            
+            // Opcional: Aciona o clique no primeiro item para garantir que
+            // o conteúdo inicial esteja alinhado (apesar do CSS já fazer isso)
+            // navItems[0].click(); 
+        });
+    </script>
+
+</body>
+</html>
