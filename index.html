@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br"
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -79,41 +79,36 @@
             border-bottom: 1px solid var(--border-color);
             padding: 0.5rem;
             
-            /* Fixo no topo em mobile */
             position: sticky;
             top: 0;
             z-index: 1000;
         }
         
-        .sidebar-header {
-            display: none; /* Oculto em mobile */
-        }
+        .sidebar-header { display: none; }
 
         .sidebar-nav {
             display: flex;
-            flex-direction: row; /* Abas lado a lado em mobile */
-            overflow-x: auto; /* Permite rolar horizontalmente se não couber */
+            flex-direction: row; 
+            overflow-x: auto; 
             -webkit-overflow-scrolling: touch;
-            scrollbar-width: none; /* Esconde scrollbar (Firefox) */
+            scrollbar-width: none; 
         }
         
-        .sidebar-nav::-webkit-scrollbar {
-            display: none; /* Esconde scrollbar (Chrome/Safari) */
-        }
+        .sidebar-nav::-webkit-scrollbar { display: none; }
 
         .nav-item {
             display: flex;
             align-items: center;
-            padding: 0.75rem 1rem; /* 12px 16px */
-            font-size: 0.9rem; /* 14px */
+            padding: 0.75rem 1rem; 
+            font-size: 0.9rem; 
             font-weight: 500;
             color: var(--color-text-secondary);
             text-decoration: none;
-            border-radius: 0.5rem; /* 8px */
+            border-radius: 0.5rem; 
             transition: background-color 0.2s, color 0.2s;
             cursor: pointer;
-            white-space: nowrap; /* Impede que o texto quebre a linha */
-            flex-shrink: 0; /* Impede que os itens encolham */
+            white-space: nowrap; 
+            flex-shrink: 0; 
         }
         
         .nav-item:hover {
@@ -128,17 +123,14 @@
         }
 
         .nav-item-icon {
-            width: 1.25rem; /* 20px */
-            height: 1.25rem; /* 20px */
-            margin-right: 0.75rem; /* 12px */
+            width: 1.25rem; 
+            height: 1.25rem; 
+            margin-right: 0.75rem; 
             flex-shrink: 0;
         }
         
-        /* Oculta ícones em mobile para economizar espaço */
         @media (max-width: 1023px) {
-            .nav-item-icon {
-                display: none;
-            }
+            .nav-item-icon { display: none; }
             .nav-item {
                 justify-content: center;
                 flex-grow: 1;
@@ -148,86 +140,64 @@
         /* --- Área de Conteúdo Principal --- */
         .main-content {
             flex-grow: 1;
-            padding: 1.5rem; /* 24px */
+            padding: 1.5rem; 
             width: 100%;
         }
         
-        .main-header {
-            margin-bottom: 1.5rem; /* 24px */
-        }
-
-        .main-header h2 {
-            font-size: 1.8rem; /* 28px */
-            color: var(--color-text-primary);
-        }
-
+        .main-header { margin-bottom: 1.5rem; }
+        .main-header h2 { font-size: 1.8rem; }
         .main-header p {
-            font-size: 1rem; /* 16px */
+            font-size: 1rem; 
             color: var(--color-text-secondary);
             margin-top: 0.25rem;
         }
         
-        /* Conteúdo de cada "aba" */
-        .tab-content {
-            display: none; /* Oculto por padrão */
-        }
+        .tab-content { display: none; }
 
         /* --- Layout de Grid de Cards --- */
         .card-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 1.5rem; /* 24px */
+            gap: 1.5rem; 
         }
         
-        /* Card individual */
         .card {
             background-color: var(--bg-content);
             border-radius: var(--card-radius);
             box-shadow: var(--card-shadow);
             border: 1px solid var(--border-color);
-            overflow: hidden; /* Garante que o conteúdo respeite o radius */
+            overflow: hidden; 
         }
         
-        /* Cards que ocupam a largura total (Ex: Título da Página) */
-        .card.full-width {
-            grid-column: 1 / -1; /* Ocupa todas as colunas */
-        }
+        .card.full-width { grid-column: 1 / -1; }
 
         .card-header {
-            padding: 1rem 1.5rem; /* 16px 24px */
+            padding: 1rem 1.5rem; 
             border-bottom: 1px solid var(--border-color);
         }
         
-        .card-header h3 {
-            font-size: 1.125rem; /* 18px */
-            color: var(--color-text-primary);
-        }
+        .card-header h3 { font-size: 1.125rem; }
 
-        .card-body {
-            padding: 1.5rem; /* 24px */
-        }
+        .card-body { padding: 1.5rem; }
         
         .card-body h4 {
-            font-size: 1rem; /* 16px */
+            font-size: 1rem; 
             font-weight: 600;
-            margin-top: 1.25rem; /* 20px */
-            margin-bottom: 0.5rem; /* 8px */
+            margin-top: 1.25rem; 
+            margin-bottom: 0.5rem; 
         }
         
-        .card-body p {
-            margin-bottom: 1rem;
-        }
+        .card-body p { margin-bottom: 1rem; }
 
         /* --- Estilo do Accordion (details) --- */
         .accordion-item {
             border: 1px solid var(--border-color);
-            border-radius: 0.5rem; /* 8px */
+            border-radius: 0.5rem; 
             margin-bottom: 1rem;
             background-color: #fafafa;
         }
         
         .accordion-item[open] {
-            /* Sombra quando aberto, para dar "profundidade" */
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
         }
 
@@ -235,21 +205,18 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 1.25rem; /* 16px 20px */
-            font-size: 1rem; /* 16px */
+            padding: 1rem 1.25rem; 
+            font-size: 1rem; 
             font-weight: 600;
             cursor: pointer;
-            list-style: none; /* Remove marcador padrão */
+            list-style: none; 
         }
         
-        .accordion-header::-webkit-details-marker {
-            display: none;
-        }
+        .accordion-header::-webkit-details-marker { display: none; }
         
-        /* Seta do Accordion */
         .accordion-header::after {
             content: '+';
-            font-size: 1.5rem; /* 24px */
+            font-size: 1.5rem; 
             font-weight: 400;
             color: var(--color-text-secondary);
             transform: rotate(0);
@@ -262,12 +229,11 @@
         }
 
         .accordion-content {
-            padding: 1.5rem; /* 24px */
+            padding: 1.5rem; 
             border-top: 1px solid var(--border-color);
             background-color: var(--bg-content);
         }
         
-        /* Estilo para Nível 1 (Plataforma) */
         .accordion-plataforma > .accordion-header {
             background-color: #f9f9f9;
             font-size: 1.1rem;
@@ -276,11 +242,11 @@
         /* --- Footer --- */
         .footer {
             margin-top: 2rem;
-            padding: 2rem 1.5rem; /* 32px 24px */
+            padding: 2rem 1.5rem; 
             background-color: var(--bg-content);
             border-top: 1px solid var(--border-color);
             color: var(--color-text-secondary);
-            font-size: 0.875rem; /* 14px */
+            font-size: 0.875rem; 
             
             display: flex;
             flex-direction: column;
@@ -299,9 +265,76 @@
             padding: 0 0.5rem;
             transition: color 0.2s;
         }
-        .footer-links a:hover {
-            color: var(--color-primary);
+        .footer-links a:hover { color: var(--color-primary); }
+
+        
+        /* --- INÍCIO: NOVOS ESTILOS DO LIGHTBOX (Modal de Imagem) --- */
+        .lightbox-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); /* Fundo escuro */
+            
+            /* O "embaçado" que você pediu */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px); /* Suporte para Safari */
+            
+            z-index: 10000;
+            display: flex; /* Centraliza a imagem */
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            
+            /* Animação suave */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
+
+        .lightbox-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox-image {
+            max-width: 90%;
+            max-height: 90vh; /* Limita a altura a 90% da tela */
+            object-fit: contain; /* Garante que a imagem caiba sem distorcer */
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 3rem; /* 48px */
+            font-weight: 300;
+            color: #ffffff;
+            cursor: pointer;
+            line-height: 1;
+            transition: opacity 0.2s;
+        }
+        
+        .lightbox-close:hover {
+            opacity: 0.8;
+        }
+        
+        /* Adiciona o cursor de "zoom" às imagens clicáveis */
+        .card-body img,
+        .tab-content > img { /* Pega imagens no card e também as de fora */
+            cursor: zoom-in;
+            transition: transform 0.2s ease;
+        }
+        
+        /* Não aplicar zoom em GIFs (ex: radar) */
+        .card-body img[src$=".gif"],
+        .tab-content > img[src$=".gif"] {
+            cursor: default;
+        }
+        /* --- FIM: NOVOS ESTILOS DO LIGHTBOX --- */
 
 
         /* --- Layout Desktop (min-width: 1024px) --- */
@@ -312,8 +345,8 @@
 
             .sidebar {
                 width: var(--sidebar-width-desktop);
-                height: 100vh; /* Ocupa 100% da altura */
-                position: fixed; /* Fixo na lateral */
+                height: 100vh; 
+                position: fixed; 
                 top: 0;
                 left: 0;
                 border-bottom: none;
@@ -325,37 +358,31 @@
             
             .sidebar-header {
                 display: block;
-                font-size: 1.5rem; /* 24px */
+                font-size: 1.5rem; 
                 font-weight: 700;
                 padding: 1rem 0.5rem 1.5rem 0.5rem;
                 color: var(--color-text-primary);
-                /* Você pode colocar um logo aqui */
-                /* Ex: <img src="logo.svg" alt="Logo"> */
             }
 
             .sidebar-nav {
-                flex-direction: column; /* Empilhado verticalmente */
+                flex-direction: column; 
                 overflow-x: hidden;
                 overflow-y: auto;
-                flex-grow: 1; /* Ocupa espaço disponível */
+                flex-grow: 1; 
             }
 
             .nav-item {
-                font-size: 0.95rem; /* 15px */
-                padding: 0.8rem 1rem; /* 13px 16px */
+                font-size: 0.95rem; 
+                padding: 0.8rem 1rem; 
                 margin-bottom: 0.25rem;
             }
             
-            /* Mostra ícones no desktop */
-            .nav-item-icon {
-                display: block;
-            }
+            .nav-item-icon { display: block; }
 
             .main-content {
-                /* Empurra o conteúdo para depois da sidebar */
                 margin-left: var(--sidebar-width-desktop);
                 width: calc(100% - var(--sidebar-width-desktop));
-                padding: 2rem; /* 32px */
+                padding: 2rem; 
             }
             
             .footer {
@@ -397,8 +424,7 @@
                     Avaliação Técnica
                 </a>
             </nav>
-            
-            </aside>
+        </aside>
 
         <main class="main-content">
             <header class="main-header">
@@ -407,33 +433,25 @@
             </header>
 
             <section id="Categoria0" class="tab-content" style="display: block;">
-                
                 <div class="card-grid">
                     <div class="card full-width">
-                        <div class="card-header">
-                            <h3>As Marcas Humanas na Política</h3>
-                        </div>
+                        <div class="card-header"> <h3>As Marcas Humanas na Política</h3> </div>
                         <div class="card-body">
                             <p>As marcas humanas na política são (...) Os 03 conceitos fundamentais para o sucesso do líder político são (...)</p>
                             <img src="pic.jpg" alt="Imagem da Categoria 0" loading="lazy">
                         </div>
                     </div>
-                    
                     <div class="card full-width">
-                        <div class="card-header">
-                             <h3>Nome do Candidato</h3>
-                        </div>
+                        <div class="card-header"> <h3>Nome do Candidato</h3> </div>
                         <div class="card-body">
                             <p>Introdução sobre o candidato (...)</p>
                             <p>Quantidade de postagens analisadas, plataformas (Instagram, Facebook, Twitter, TikTok e Youtube) e período analisado (...)</p> 
                         </div>
                     </div>
                 </div>
-                
             </section>
 
             <section id="Categoria1" class="tab-content">
-                
                 <div class="card full-width">
                     <div class="card-header"><h3>Análise de Conteúdo</h3></div>
                     <div class="card-body">
@@ -441,9 +459,9 @@
                     </div>
                 </div>
                 
-                <details class="accordion-item accordion-plataforma open"> <summary class="accordion-header">Instagram</summary>
+                <details class="accordion-item accordion-plataforma open">
+                    <summary class="accordion-header">Instagram</summary>
                     <div class="accordion-content">
-                        
                         <div class="card-grid">
                             <div class="card">
                                 <div class="card-header"><h3>Distribuição por Categoria</h3></div>
@@ -452,47 +470,38 @@
                                     <img src="pic.jpg" alt="Distribuição de postagens" loading="lazy">
                                 </div>
                             </div>
-                            
                             <div class="card">
                                 <div class="card-header"><h3>Análise de Comentários</h3></div>
                                 <div class="card-body">
                                     <p>Gráfico: Número de comentários por categoria (Dispersão)</p>
                                     <img src="pic.jpg" alt="Comentários por categoria" loading="lazy">
-                                    
                                     <h4>1ª mais comentada - Autenticidade</h4>
                                     <img src="pic.jpg" alt="Post Autenticidade" loading="lazy">
                                     <p>Por que foi mais comentada - Autenticidade</p>
-                                    
                                     <h4>1ª mais comentada - Competência</h4>
                                     <img src="pic.jpg" alt="Post Competência" loading="lazy">
                                     <p>Por que foi mais comentada - Competência</p>
-                                    
                                     <h4>1ª mais comentada - Humanização</h4>
                                     <img src="pic.jpg" alt="Post Humanização" loading="lazy">
                                     <p>Por que foi mais comentada - Humanização</p>
                                 </div>
                             </div>
-                            
                             <div class="card">
                                 <div class="card-header"><h3>Análise de Curtidas</h3></div>
                                 <div class="card-body">
                                     <p>Gráfico: Número de curtidas por categoria (Dispersão)</p>
                                     <img src="pic.jpg" alt="Curtidas por categoria" loading="lazy">
-
                                     <h4>1ª mais curtida - Autenticidade</h4>
                                     <img src="pic.jpg" alt="Post Autenticidade" loading="lazy">
                                     <p>Por que foi mais curtida - Autenticidade</p>
-                                    
                                     <h4>1ª mais curtida - Competência</h4>
                                     <img src="pic.jpg" alt="Post Competência" loading="lazy">
                                     <p>Por que foi mais curtida - Competência</p>
-                                    
                                     <h4>1ª mais curtida - Humanização</h4>
                                     <img src="pic.jpg" alt="Post Humanização" loading="lazy">
                                     <p>Por que foi mais curtida - Humanização</p>
                                 </div>
                             </div>
-                            
                             <div class="card">
                                 <div class="card-header"><h3>Análise de Discurso</h3></div>
                                 <div class="card-body">
@@ -502,7 +511,6 @@
                                     <p>Comentário sobre a nuvem de palavras 1</p>
                                 </div>
                             </div>
-                            
                             <div class="card">
                                 <div class="card-header"><h3>Comportamento da Audiência</h3></div>
                                 <div class="card-body">
@@ -512,10 +520,9 @@
                                     <p>Comentário sobre a nuvem de palavras 2</p>
                                 </div>
                             </div>
-                            
-                        </div></div> 
+                        </div>
+                    </div> 
                 </details>
-                
             </section>
                 
             <section id="Categoria2" class="tab-content">
@@ -527,7 +534,6 @@
                 <details class="accordion-item accordion-plataforma open">
                     <summary class="accordion-header">Instagram</summary>
                     <div class="accordion-content">
-                        
                         <div class="card full-width">
                             <div class="card-header"><h3>Comportamento da Audiência (Série Histórica)</h3></div>
                             <div class="card-body">
@@ -535,7 +541,6 @@
                                 <p>Explicação breve(...)</p>
                             </div>
                         </div>
-                        
                         <div class="card-grid">
                             <div class="card">
                                 <div class="card-header"><h3>Confiança</h3></div>
@@ -601,7 +606,8 @@
                                     <img src="pic.jpg" alt="Maior repulsa" loading="lazy"><p>Explicação</p>
                                 </div>
                             </div>
-                        </div></div> 
+                        </div>
+                    </div> 
                 </details>
             </section>
             
@@ -629,7 +635,8 @@
                                     <p>comentário sobre o indicador (...)</p>
                                 </div>
                             </div>
-                        </div></div> 
+                        </div>
+                    </div> 
                 </details>
             </section>
 
@@ -649,7 +656,8 @@
                                     <p>Avaliação (...)</p>
                                 </div>
                             </div>
-                        </div></div> 
+                        </div>
+                    </div> 
                 </details>
             </section>
             
@@ -665,54 +673,85 @@
                 </div>
             </footer>
             
-        </main> </div> <script>
-        // --- JavaScript Moderno e Limpo ---
-        
-        // Espera o DOM estar pronto para executar o script
+        </main> </div> <div id="imageLightbox" class="lightbox-overlay">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-image" id="lightboxImageSrc" src="" alt="Imagem Ampliada">
+    </div>
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            // Seleciona todos os itens de navegação e abas de conteúdo
+            // --- LÓGICA DAS ABAS (Existente) ---
             const navItems = document.querySelectorAll('.nav-item');
             const tabContents = document.querySelectorAll('.tab-content');
             
-            // Adiciona um "ouvinte" de clique a CADA item da navegação
             navItems.forEach(navItem => {
                 navItem.addEventListener('click', (event) => {
-                    event.preventDefault(); // Impede o link <a> de navegar
-                    
-                    // 1. Pega o ID do alvo (ex: "Categoria0") do atributo 'data-target'
+                    event.preventDefault(); 
                     const targetId = navItem.getAttribute('data-target');
                     
-                    // 2. Remove a classe 'active' de TODOS os itens da navegação
-                    navItems.forEach(item => {
-                        item.classList.remove('active');
-                    });
-                    
-                    // 3. Adiciona a classe 'active' APENAS ao item clicado
+                    navItems.forEach(item => item.classList.remove('active'));
                     navItem.classList.add('active');
                     
-                    // 4. Esconde TODAS as abas de conteúdo
-                    tabContents.forEach(content => {
-                        content.style.display = 'none';
-                    });
+                    tabContents.forEach(content => content.style.display = 'none');
                     
-                    // 5. Mostra APENAS a aba de conteúdo correspondente ao ID
                     const targetContent = document.getElementById(targetId);
                     if (targetContent) {
                         targetContent.style.display = 'block';
                     }
                     
-                    // 6. Rola a tela para o topo (útil em mobile)
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
             });
             
-            // Opcional: Aciona o clique no primeiro item para garantir que
-            // o conteúdo inicial esteja alinhado (apesar do CSS já fazer isso)
-            // navItems[0].click(); 
+            
+            // --- INÍCIO: NOVA LÓGICA DO LIGHTBOX ---
+            
+            const lightbox = document.getElementById('imageLightbox');
+            const lightboxImg = document.getElementById('lightboxImageSrc');
+            const closeBtn = document.querySelector('.lightbox-close');
+
+            // Verifica se os elementos do lightbox existem na página
+            if (lightbox && lightboxImg && closeBtn) {
+                
+                // 1. Encontra TODAS as imagens dentro da área de conteúdo principal
+                const contentImages = document.querySelectorAll('.main-content img');
+                
+                contentImages.forEach(img => {
+                    // Adiciona o evento de clique, *exceto* se for um GIF
+                    // (para não parar a animação do radar)
+                    if (!img.src.endsWith('.gif')) {
+                        img.addEventListener('click', () => {
+                            lightboxImg.src = img.src; // Define o SRC da imagem no modal
+                            lightbox.classList.add('show'); // Mostra o modal
+                        });
+                    }
+                });
+
+                // 2. Função para fechar o modal
+                const closeLightbox = () => {
+                    lightbox.classList.remove('show'); // Esconde o modal
+                    // Opcional: limpa o src para não carregar imagem desnecessária
+                    setTimeout(() => { lightboxImg.src = ''; }, 300); 
+                };
+
+                // 3. Event Listeners para fechar
+                closeBtn.addEventListener('click', closeLightbox); // Fecha ao clicar no 'X'
+                
+                lightbox.addEventListener('click', (e) => {
+                    // Fecha ao clicar FORA da imagem (no overlay escuro)
+                    if (e.target === lightbox) { 
+                        closeLightbox();
+                    }
+                });
+                
+                // 4. Opcional: Fechar com a tecla 'Escape' (ESC)
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && lightbox.classList.contains('show')) {
+                        closeLightbox();
+                    }
+                });
+            }
+            // --- FIM: NOVA LÓGICA DO LIGHTBOX ---
         });
     </script>
 
