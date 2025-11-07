@@ -391,6 +391,67 @@
                 text-align: left;
             }
         }
+
+     /* ... (todo o seu CSS anterior) ... */
+
+    /* --- INÍCIO: NOVOS ESTILOS DO CARD DE PERFIL --- */
+    
+    .profile-banner {
+        /* Define uma altura fixa para o banner */
+        height: 220px; 
+        overflow: hidden;
+        background-color: #e5e7eb; /* Cor de fundo caso a imagem falhe */
+    }
+    
+    .profile-banner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Garante que a imagem cubra o espaço sem distorcer */
+        /* Ajusta o radius para bater com o card */
+        border-radius: var(--card-radius) var(--card-radius) 0 0;
+    }
+
+    .profile-card-body {
+        /* Posição relativa para "ancorar" a foto de perfil */
+        position: relative;
+        /* Damos um padding maior no topo para o nome não ficar colado na foto */
+        padding-top: 5rem; /* 80px */
+    }
+
+    .profile-pic {
+        width: 120px;  /* Tamanho da foto (não muito grande) */
+        height: 120px;
+        border-radius: 50%; /* Deixa circular */
+        border: 5px solid var(--bg-content); /* Borda branca (cor do card) */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Sombra suave */
+        
+        /* O truque de posicionamento: */
+        position: absolute;
+        top: -60px;  /* Metade da altura (120px / 2) PARA CIMA */
+        left: 1.5rem; /* Alinha com o padding do card-body */
+        
+        background-color: #fff; /* Garante que não seja transparente */
+        object-fit: cover; /* Garante que a foto preencha o círculo */
+    }
+    
+    .profile-name {
+        font-size: 1.75rem; /* 28px - Nome com mais destaque */
+        font-weight: 700;
+        color: var(--color-text-primary);
+        margin-bottom: 1rem; /* Espaço antes do texto de introdução */
+        line-height: 1.2;
+    }
+
+    /* Ajuste para o lightbox não aplicar zoom na foto de perfil */
+    .profile-pic {
+        cursor: default;
+    }
+
+    /* --- FIM: NOVOS ESTILOS DO CARD DE PERFIL --- */
+
+
+    /* --- Layout Desktop (min-width: 1024px) --- */
+    /* ... (resto do seu CSS) ... */   
     </style>
 </head>
 <body>
@@ -433,23 +494,33 @@
             </header>
 
             <section id="Categoria0" class="tab-content" style="display: block;">
-                <div class="card-grid">
-                    <div class="card full-width">
-                        <div class="card-header"> <h3>As Marcas Humanas na Política</h3> </div>
-                        <div class="card-body">
-                            <p>As marcas humanas na política são (...) Os 03 conceitos fundamentais para o sucesso do líder político são (...)</p>
-                            <img src="pic.jpg" alt="Imagem da Categoria 0" loading="lazy">
-                        </div>
-                    </div>
-                    <div class="card full-width">
-                        <div class="card-header"> <h3>Nome do Candidato</h3> </div>
-                        <div class="card-body">
-                            <p>Introdução sobre o candidato (...)</p>
-                            <p>Quantidade de postagens analisadas, plataformas (Instagram, Facebook, Twitter, TikTok e Youtube) e período analisado (...)</p> 
-                        </div>
-                    </div>
-                </div>
-            </section>
+    <div class="card-grid">
+        
+        <div class="card full-width">
+            <div class="card-header"> <h3>As Marcas Humanas na Política</h3> </div>
+            <div class="card-body">
+                <p>As marcas humanas na política são (...) Os 03 conceitos fundamentais para o sucesso do líder político são (...)</p>
+            </div>
+        </div>
+        
+        <div class="card full-width">
+            
+            <div class="profile-banner">
+                <img src="pic.jpg" alt="Imagem da Categoria 0" loading="lazy">
+            </div>
+            
+            <div class="card-body profile-card-body">
+                
+                <img src="pic.jpg" alt="Foto de Perfil do Candidato" class="profile-pic">
+                
+                <h3 class="profile-name">Nome do Candidato</h3>
+                
+                <p>Introdução sobre o candidato (...)</p>
+                <p>Quantidade de postagens analisadas, plataformas (Instagram, Facebook, Twitter, TikTok e Youtube) e período analisado (...)</p> 
+            </div>
+        </div>
+    </div>
+</section>
 
             <section id="Categoria1" class="tab-content">
                 <div class="card full-width">
