@@ -1,12 +1,8 @@
 <!DOCTYPE html>
-<html lang="pt-br"
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="pt-br">  <head>
+    <meta charset="UTF-8">  <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="icone.png" type="image/png">
-    <title>Dashboard do Lula</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <title>Dashboard do Lula</title> <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
@@ -144,7 +140,13 @@
             width: 100%;
         }
         
-        .main-header { margin-bottom: 1.5rem; }
+        /* ATUALIZAÇÃO AQUI (Flexbox) */
+        .main-header {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
         .main-header h2 { font-size: 1.8rem; }
         .main-header p {
             font-size: 1rem; 
@@ -337,61 +339,6 @@
         /* --- FIM: NOVOS ESTILOS DO LIGHTBOX --- */
 
 
-        /* --- Layout Desktop (min-width: 1024px) --- */
-        @media (min-width: 1024px) {
-            .app-layout {
-                flex-direction: row; /* Lado a lado */
-            }
-
-            .sidebar {
-                width: var(--sidebar-width-desktop);
-                height: 100vh; 
-                position: fixed; 
-                top: 0;
-                left: 0;
-                border-bottom: none;
-                border-right: 1px solid var(--border-color);
-                padding: 1rem;
-                display: flex;
-                flex-direction: column;
-            }
-            
-            .sidebar-header {
-                display: block;
-                font-size: 1.5rem; 
-                font-weight: 700;
-                padding: 1rem 0.5rem 1.5rem 0.5rem;
-                color: var(--color-text-primary);
-            }
-
-            .sidebar-nav {
-                flex-direction: column; 
-                overflow-x: hidden;
-                overflow-y: auto;
-                flex-grow: 1; 
-            }
-
-            .nav-item {
-                font-size: 0.95rem; 
-                padding: 0.8rem 1rem; 
-                margin-bottom: 0.25rem;
-            }
-            
-            .nav-item-icon { display: block; }
-
-            .main-content {
-                margin-left: var(--sidebar-width-desktop);
-                width: calc(100% - var(--sidebar-width-desktop));
-                padding: 2rem; 
-            }
-            
-            .footer {
-                flex-direction: row;
-                justify-content: space-between;
-                text-align: left;
-            }
-        }
-
      /* ... (todo o seu CSS anterior) ... */
 
     /* --- INÍCIO: NOVOS ESTILOS DO CARD DE PERFIL --- */
@@ -449,9 +396,96 @@
 
     /* --- FIM: NOVOS ESTILOS DO CARD DE PERFIL --- */
 
+    
+    /* --- INÍCIO: Estilos do Novo Botão de Compartilhar --- */
+    .share-button {
+        display: flex; /* Padrão (visível no mobile) */
+        align-items: center;
+        justify-content: center;
+        
+        width: 44px;  /* Tamanho bom para toque */
+        height: 44px;
+        border-radius: 50%; /* Circular */
+        
+        background-color: var(--bg-content);
+        border: 1px solid var(--border-color);
+        color: var(--color-text-secondary); /* Cor sutil */
+        
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .share-button:hover {
+        background-color: var(--bg-body);
+        color: var(--color-primary); /* Destaca ao passar o mouse */
+    }
+
+    .share-button svg {
+        width: 1.5rem; /* 24px */
+        height: 1.5rem;
+    }
+    /* --- FIM: Estilos do Botão de Compartilhar --- */
+    
 
     /* --- Layout Desktop (min-width: 1024px) --- */
-    /* ... (resto do seu CSS) ... */   
+    @media (min-width: 1024px) {
+        .app-layout {
+            flex-direction: row; /* Lado a lado */
+        }
+
+        .sidebar {
+            width: var(--sidebar-width-desktop);
+            height: 100vh; 
+            position: fixed; 
+            top: 0;
+            left: 0;
+            border-bottom: none;
+            border-right: 1px solid var(--border-color);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            display: block;
+            font-size: 1.5rem; 
+            font-weight: 700;
+            padding: 1rem 0.5rem 1.5rem 0.5rem;
+            color: var(--color-text-primary);
+        }
+
+        .sidebar-nav {
+            flex-direction: column; 
+            overflow-x: hidden;
+            overflow-y: auto;
+            flex-grow: 1; 
+        }
+
+        .nav-item {
+            font-size: 0.95rem; 
+            padding: 0.8rem 1rem; 
+            margin-bottom: 0.25rem;
+        }
+        
+        .nav-item-icon { display: block; }
+
+        .main-content {
+            margin-left: var(--sidebar-width-desktop);
+            width: calc(100% - var(--sidebar-width-desktop));
+            padding: 2rem; 
+        }
+        
+        .footer {
+            flex-direction: row;
+            justify-content: space-between;
+            text-align: left;
+        }
+        
+        /* NOVO: Esconde o botão de compartilhar no desktop */
+        .share-button {
+            display: none;
+        }
+    }
     </style>
 </head>
 <body>
@@ -488,46 +522,52 @@
         </aside>
 
         <main class="main-content">
+            
             <header class="main-header">
-                <h2>2025</h2>
-                <p>Posicionamento e percepção da audiência</p>
+                <div class="main-header-text">
+                    <h2>2025</h2>
+                    <p>Posicionamento e percepção da audiência</p>
+                </div>
+                
+                <button class="share-button" id="mobileShareBtn" aria-label="Compartilhar">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                    </svg>
+                </button>
             </header>
-
             <section id="Categoria0" class="tab-content" style="display: block;">
-    <div class="card-grid">
-        
-        
-        
-        <div class="card full-width">
-            
-            <div class="profile-banner">
-                <img src="capa2.jpg" alt="Imagem da Categoria 0" loading="lazy">
-            </div>
-            
-            <div class="card-body profile-card-body">
-                
-                <img src="perfil2.jpg" alt="Foto de Perfil do Candidato" class="profile-pic">
-                
-                <h3 class="profile-name">Luiz Inácio Lula da Silva</h3>
-                
-                <p>Presidente do Brasil</p>
-                <p>(...)</p> 
-            </div>
+                <div class="card-grid">
+                    
+                    <div class="card full-width">
+                        
+                        <div class="profile-banner">
+                            <img src="capa2.jpg" alt="Imagem da Categoria 0" loading="lazy">
+                        </div>
+                        
+                        <div class="card-body profile-card-body">
+                            
+                            <img src="perfil2.jpg" alt="Foto de Perfil do Candidato" class="profile-pic">
+                            
+                            <h3 class="profile-name">Luiz Inácio Lula da Silva</h3>
+                            
+                            <p>Presidente do Brasil</p>
+                            <p>(...)</p> 
+                        </div>
 
-        
-        </div>
+                    
+                    </div>
 
-        <div class="card full-width">
-            <div class="card-header"> <h3>As Marcas Humanas na Política</h3> </div>
-            <div class="card-body">
-                <p>As marcas humanas na política são (...)</p>
-                <p>Os 03 conceitos fundamentais para o sucesso do líder político são (...)</p>
-            </div>
-        </div>
+                    <div class="card full-width">
+                        <div class="card-header"> <h3>As Marcas Humanas na Política</h3> </div>
+                        <div class="card-body">
+                            <p>As marcas humanas na política são (...)</p>
+                            <p>Os 03 conceitos fundamentais para o sucesso do líder político são (...)</p>
+                        </div>
+                    </div>
 
 
-    </div>
-</section>
+                </div>
+            </section>
 
             <section id="Categoria1" class="tab-content">
                 <div class="card full-width">
@@ -748,10 +788,14 @@
                 </div>
             </footer>
             
-        </main> </div> <div id="imageLightbox" class="lightbox-overlay">
+        </main>
+    </div>
+    
+    <div id="imageLightbox" class="lightbox-overlay">
         <span class="lightbox-close">&times;</span>
         <img class="lightbox-image" id="lightboxImageSrc" src="" alt="Imagem Ampliada">
     </div>
+    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
@@ -779,7 +823,7 @@
             });
             
             
-            // --- INÍCIO: NOVA LÓGICA DO LIGHTBOX ---
+            // --- INÍCIO: LÓGICA DO LIGHTBOX (Existente) ---
             
             const lightbox = document.getElementById('imageLightbox');
             const lightboxImg = document.getElementById('lightboxImageSrc');
@@ -826,11 +870,45 @@
                     }
                 });
             }
-            // --- FIM: NOVA LÓGICA DO LIGHTBOX ---
+            // --- FIM: LÓGICA DO LIGHTBOX ---
+            
+            
+            
+            // --- INÍCIO: NOVA LÓGICA DE COMPARTILHAMENTO ---
+            
+            const shareBtn = document.getElementById('mobileShareBtn');
+            
+            if (shareBtn) {
+                shareBtn.addEventListener('click', async () => {
+                    
+                    // Dados que você quer compartilhar
+                    const shareData = {
+                        title: 'Dashboard Lula 2025',
+                        text: 'Confira o dashboard de posicionamento e percepção da audiência.',
+                        url: window.location.href // Pega a URL atual
+                    };
+                    
+                    // Verifica se o navegador suporta o Web Share API
+                    if (navigator.share) {
+                        try {
+                            // Abre o menu de compartilhamento nativo
+                            await navigator.share(shareData);
+                            console.log('Conteúdo compartilhado com sucesso!');
+                        } catch (err) {
+                            // O usuário pode ter cancelado o compartilhamento
+                            console.error('Erro ao compartilhar:', err);
+                        }
+                    } else {
+                        // Fallback (embora o botão esteja escondido no desktop)
+                        alert('O compartilhamento não é suportado neste navegador.');
+                    }
+                });
+            }
+            
+            // --- FIM: NOVA LÓGICA DE COMPARTILHAMENTO ---
+            
         });
     </script>
 
 </body>
 </html>
-
-
