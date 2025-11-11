@@ -6,6 +6,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         /* --- Variáveis de Design (Estilo profissional) --- */
@@ -191,6 +192,16 @@
         
         .card-body p { margin-bottom: 1rem; }
 
+        
+        /* --- INÍCIO: Correção do Tamanho do Gráfico --- */
+.chart-container {
+    position: relative; /* Essencial para o Chart.js funcionar bem */
+    height: 300px;  /* <-- AQUI ESTÁ A MÁGICA! Defina uma altura fixa */
+    width: 100%;    /* Garante que ocupe a largura do card */
+}
+/* --- FIM: Correção do Tamanho do Gráfico --- */
+        
+        
         /* --- Estilo do Accordion (details) --- */
         .accordion-item {
             border: 1px solid var(--border-color);
@@ -580,12 +591,16 @@
                     <div class="accordion-content">
                         <div class="card-grid">
                             <div class="card">
-                                <div class="card-header"><h3>Distribuição por Categoria</h3></div>
-                                <div class="card-body">
-                                    <p>Gráfico: Distribuição de postagens por categoria</p>
-                                    <img src="pic.jpg" alt="Distribuição de postagens" loading="lazy">
-                                </div>
-                            </div>
+    <div class="card-header"><h3>Distribuição por Categoria</h3></div>
+    <div class="card-body">
+        <p>Gráfico: Distribuição de postagens por categoria</p>
+        
+        <div class="chart-container">
+            <canvas id="graficoCategorias"></canvas>
+        </div>
+        
+    </div>
+</div>
                             <div class="card">
                                 <div class="card-header"><h3>Postagens mais comentadas</h3></div>
                                 <div class="card-body">
@@ -795,118 +810,182 @@
     </div>
     
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            // --- LÓGICA DAS ABAS (Existente) ---
-            const navItems = document.querySelectorAll('.nav-item');
-            const tabContents = document.querySelectorAll('.tab-content');
-            
-            navItems.forEach(navItem => {
-                navItem.addEventListener('click', (event) => {
-                    event.preventDefault(); 
-                    const targetId = navItem.getAttribute('data-target');
-                    
-                    navItems.forEach(item => item.classList.remove('active'));
-                    navItem.classList.add('active');
-                    
-                    tabContents.forEach(content => content.style.display = 'none');
-                    
-                    const targetContent = document.getElementById(targetId);
-                    if (targetContent) {
-                        targetContent.style.display = 'block';
+    // --- NOVO: Variável para guardar a instância do gráfico ---
+    // Isso nos permite destruir o gráfico antigo antes de criar um novo
+    let graficoCategoriasChart = null;
+
+    // --- NOVO: Função para criar o gráfico de barras ---
+    function criarGraficoCategorias() {
+        const ctx = document.getElementById('graficoCategorias');
+        
+        // Se o canvas não for encontrado, não faz nada
+        if (!ctx) return; 
+
+        // Destrói o gráfico anterior, se ele existir
+        // Isso previne bugs e lentidão ao clicar na aba várias vezes
+        if (graficoCategoriasChart) {
+            graficoCategoriasChart.destroy();
+        }
+
+        // Cria a nova instância do gráfico
+        graficoCategoriasChart = new Chart(ctx, {
+            type: 'bar', // Define o tipo como gráfico de barras
+            data: {
+                labels: ['Autenticidade', 'Competência', 'Humanização'],
+                datasets: [{
+                    label: '% de Distribuição',
+                    data: [50, 25, 25], // Seus dados: 50%, 25%, 25%
+                    backgroundColor: [
+                        '#2563eb', // Seu --color-primary
+                        '#4b5563', // Seu --color-text-secondary
+                        '#dbeafe'  // Seu --color-primary-light
+                    ],
+                    borderWidth: 0 // Remove a borda das barras
+                }]
+            },
+            options: {
+                indexAxis: 'y', // <-- Isso o torna um gráfico de barras HORIZONTAL
+                responsive: true, // O gráfico se ajusta ao tamanho do card
+                maintainAspectRatio: false, // Ajuda na responsividade dentro do card
+                plugins: {
+                    legend: {
+                        display: false // Esconde a legenda, já que só temos um tipo de dado
+                    },
+                    tooltip: {
+                        // Personaliza o "tooltip" (caixa que aparece ao passar o mouse)
+                        callbacks: {
+                            label: function(context) {
+                                // Adiciona o símbolo de '%'
+                                return ' ' + context.raw + '%';
+                            }
+                        }
                     }
-                    
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
+                },
+                scales: {
+                    x: { // Eixo X (agora na horizontal, mostrando os valores)
+                        beginAtZero: true, // Começa do zero
+                        max: 100, // Eixo vai até 100
+                        ticks: {
+                            // Adiciona o '%' no eixo
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    y: { // Eixo Y (onde ficam as categorias)
+                        grid: {
+                            display: false // Remove as linhas de grade do fundo
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // --- LÓGICA DAS ABAS (Existente) ---
+        const navItems = document.querySelectorAll('.nav-item');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        navItems.forEach(navItem => {
+            navItem.addEventListener('click', (event) => {
+                event.preventDefault(); 
+                const targetId = navItem.getAttribute('data-target');
+                
+                navItems.forEach(item => item.classList.remove('active'));
+                navItem.classList.add('active');
+                
+                tabContents.forEach(content => content.style.display = 'none');
+                
+                const targetContent = document.getElementById(targetId);
+                if (targetContent) {
+                    targetContent.style.display = 'block';
+
+                    // --- NOVO: CONDIÇÃO PARA CRIAR O GRÁFICO ---
+                    // Se a aba que acabamos de abrir for a "Categoria1",
+                    // chamamos a função para (re)desenhar o gráfico.
+                    if (targetId === 'Categoria1') {
+                        criarGraficoCategorias();
+                    }
+                    // --- FIM DA NOVA CONDIÇÃO ---
+
+                }
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        
+        
+        // --- LÓGICA DO LIGHTBOX (Existente) ---
+        
+        const lightbox = document.getElementById('imageLightbox');
+        const lightboxImg = document.getElementById('lightboxImageSrc');
+        const closeBtn = document.querySelector('.lightbox-close');
+
+        if (lightbox && lightboxImg && closeBtn) {
+            
+            const contentImages = document.querySelectorAll('.main-content img');
+            
+            contentImages.forEach(img => {
+                if (!img.src.endsWith('.gif')) {
+                    img.addEventListener('click', () => {
+                        lightboxImg.src = img.src; 
+                        lightbox.classList.add('show'); 
+                    });
+                }
+            });
+
+            const closeLightbox = () => {
+                lightbox.classList.remove('show'); 
+                setTimeout(() => { lightboxImg.src = ''; }, 300); 
+            };
+
+            closeBtn.addEventListener('click', closeLightbox); 
+            
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) { 
+                    closeLightbox();
+                }
             });
             
-            
-            // --- INÍCIO: LÓGICA DO LIGHTBOX (Existente) ---
-            
-            const lightbox = document.getElementById('imageLightbox');
-            const lightboxImg = document.getElementById('lightboxImageSrc');
-            const closeBtn = document.querySelector('.lightbox-close');
-
-            // Verifica se os elementos do lightbox existem na página
-            if (lightbox && lightboxImg && closeBtn) {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && lightbox.classList.contains('show')) {
+                    closeLightbox();
+                }
+            });
+        }
+        
+        
+        // --- LÓGICA DE COMPARTILHAMENTO (Existente) ---
+        
+        const shareBtn = document.getElementById('mobileShareBtn');
+        
+        if (shareBtn) {
+            shareBtn.addEventListener('click', async () => {
                 
-                // 1. Encontra TODAS as imagens dentro da área de conteúdo principal
-                const contentImages = document.querySelectorAll('.main-content img');
-                
-                contentImages.forEach(img => {
-                    // Adiciona o evento de clique, *exceto* se for um GIF
-                    // (para não parar a animação do radar)
-                    if (!img.src.endsWith('.gif')) {
-                        img.addEventListener('click', () => {
-                            lightboxImg.src = img.src; // Define o SRC da imagem no modal
-                            lightbox.classList.add('show'); // Mostra o modal
-                        });
-                    }
-                });
-
-                // 2. Função para fechar o modal
-                const closeLightbox = () => {
-                    lightbox.classList.remove('show'); // Esconde o modal
-                    // Opcional: limpa o src para não carregar imagem desnecessária
-                    setTimeout(() => { lightboxImg.src = ''; }, 300); 
+                const shareData = {
+                    title: 'Dashboard Lula 2025',
+                    text: 'Confira o dashboard de posicionamento e percepção da audiência.',
+                    url: window.location.href 
                 };
-
-                // 3. Event Listeners para fechar
-                closeBtn.addEventListener('click', closeLightbox); // Fecha ao clicar no 'X'
                 
-                lightbox.addEventListener('click', (e) => {
-                    // Fecha ao clicar FORA da imagem (no overlay escuro)
-                    if (e.target === lightbox) { 
-                        closeLightbox();
+                if (navigator.share) {
+                    try {
+                        await navigator.share(shareData);
+                        console.log('Conteúdo compartilhado com sucesso!');
+                    } catch (err) {
+                        console.error('Erro ao compartilhar:', err);
                     }
-                });
-                
-                // 4. Opcional: Fechar com a tecla 'Escape' (ESC)
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape' && lightbox.classList.contains('show')) {
-                        closeLightbox();
-                    }
-                });
-            }
-            // --- FIM: LÓGICA DO LIGHTBOX ---
-            
-            
-            
-            // --- INÍCIO: NOVA LÓGICA DE COMPARTILHAMENTO ---
-            
-            const shareBtn = document.getElementById('mobileShareBtn');
-            
-            if (shareBtn) {
-                shareBtn.addEventListener('click', async () => {
-                    
-                    // Dados que você quer compartilhar
-                    const shareData = {
-                        title: 'Dashboard Lula 2025',
-                        text: 'Confira o dashboard de posicionamento e percepção da audiência.',
-                        url: window.location.href // Pega a URL atual
-                    };
-                    
-                    // Verifica se o navegador suporta o Web Share API
-                    if (navigator.share) {
-                        try {
-                            // Abre o menu de compartilhamento nativo
-                            await navigator.share(shareData);
-                            console.log('Conteúdo compartilhado com sucesso!');
-                        } catch (err) {
-                            // O usuário pode ter cancelado o compartilhamento
-                            console.error('Erro ao compartilhar:', err);
-                        }
-                    } else {
-                        // Fallback (embora o botão esteja escondido no desktop)
-                        alert('O compartilhamento não é suportado neste navegador.');
-                    }
-                });
-            }
-            
-            // --- FIM: NOVA LÓGICA DE COMPARTILHAMENTO ---
-            
-        });
-    </script>
+                } else {
+                    alert('O compartilhamento não é suportado neste navegador.');
+                }
+            });
+        }
+        
+    });
+</script>
 
 </body>
 </html>
