@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Adapter para usar escala de tempo com Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/wordcloud@2.1.0/src/wordcloud2.js"></script>
     
     <style>
         /* --- Variáveis de Design (Estilo profissional) --- */
@@ -757,20 +758,20 @@
                             <div class="card full-width destaque-grafico">
                                 <div class="card-header"><h3>Análise de Discurso</h3></div>
                                 <div class="card-body">
-                                    <p>Explicar (...)</p>
-                                    <p>Gráfico: Nuvem de palavras 1</p>
-                                    <img src="pic.jpg" alt="Nuvem de Palavras 1" loading="lazy">
-                                    <p>Comentário sobre a nuvem de palavras 1</p>
-                                </div>
+    <p>Explicar (...)</p>
+    <p>Gráfico: Nuvem de palavras 1</p>
+    <canvas id="nuvemPositiva" style="width: 100%; height: 350px;"></canvas>
+    <p>Comentário sobre a nuvem de palavras 1</p>
+</div>
                             </div>
                             <div class="card full-width destaque-grafico">
                                 <div class="card-header"><h3>Comportamento da Audiência</h3></div>
                                 <div class="card-body">
-                                    <p>Explicar (...)</p>
-                                    <p>Gráfico: Nuvem de palavras 2</p>
-                                    <img src="pic.jpg" alt="Nuvem de Palavras 2" loading="lazy">
-                                    <p>Comentário sobre a nuvem de palavras 2</p>
-                                </div>
+    <p>Explicar (...)</p>
+    <p>Gráfico: Nuvem de palavras 1</p>
+    <canvas id="nuvemPositiva" style="width: 100%; height: 350px;"></canvas>
+    <p>Comentário sobre a nuvem de palavras 1</p>
+</div>
                             </div>
                         </div>
                     </div> 
@@ -1342,8 +1343,9 @@ function criarGraficoDispersaoCurtidas() {
 }
 
 
-// --- FIM DA NOVA FUNÇÃO ---
-
+// ========================================================================
+// --- SUBSTITUA TODO O BLOCO A PARTIR DAQUI ---
+// ========================================================================
 
     document.addEventListener('DOMContentLoaded', () => {
         
@@ -1361,6 +1363,8 @@ function criarGraficoDispersaoCurtidas() {
                 tabContents.forEach(content => content.style.display = 'none');
                 
                 const targetContent = document.getElementById(targetId);
+                
+                // --- INÍCIO DO BLOCO CORRIGIDO ---
                 if (targetContent) {
                     targetContent.style.display = 'block';
 
@@ -1369,36 +1373,54 @@ function criarGraficoDispersaoCurtidas() {
                         criarGraficoCategorias();
                         criarGraficoDispersaoComentarios();
                         criarGraficoDispersaoCurtidas();
-                    }
+                        
+                        // --- MOVIDO PARA AQUI ---
+                        if (!nuvensIniciadas) {
+                            iniciarNuvemDePalavras();
+                            nuvensIniciadas = true; // (Corrigi o typo aqui também)
+                        }
+                    } 
                     
                     // --- NOVO: Gatilho para o gráfico de radar ---
                     if (targetId === 'Categoria3') {
                         criarGraficoRadar();
                     }
                     // --- FIM DA ATUALIZAÇÃO ---
-                }
+                    
+                } // <-- A CHAVE QUE FECHA 'if (targetContent)' VEM AQUI, DEPOIS DE TUDO.
+                // --- FIM DO BLOCO CORRIGIDO ---
                 
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         });
         
         // Também inicializa gráficos caso a aba já esteja visível ao carregar
-        // (ex: se você abrir direto em Categoria1 por algum motivo)
         const activeTab = document.querySelector('.nav-item.active');
+        
+        // --- INÍCIO DO SEGUNDO BLOCO CORRIGIDO ---
         if (activeTab) {
             const startId = activeTab.getAttribute('data-target');
+            
             if (startId === 'Categoria1') {
                 criarGraficoCategorias();
                 criarGraficoDispersaoComentarios();
                 criarGraficoDispersaoCurtidas();
+
+                // --- MOVIDO PARA AQUI ---
+                if (!nuvensIniciadas) {
+                    iniciarNuvemDePalavras();
+                    nuvensIniciadas = true;
+                }
+            } // <-- A CHAVE QUE FALTAVA ESTÁ AQUI.
+            
+            if (startId === 'Categoria3') {
+                criarGraficoRadar();
             }
-            if (startId === 'Categoria3') criarGraficoRadar();
         }
+        // --- FIM DO SEGUNDO BLOCO CORRIGIDO ---
         
         
-        // --- LÓGICA DO LIGHTBOX (Existente) ---
-        // (seu código do lightbox continua aqui...)
-        
+        // --- LÓGICA DO LIGHTBOX (Existente, sem alterações) ---
         const lightbox = document.getElementById('imageLightbox');
         const lightboxImg = document.getElementById('lightboxImageSrc');
         const closeBtn = document.querySelector('.lightbox-close');
@@ -1408,8 +1430,6 @@ function criarGraficoDispersaoCurtidas() {
             const contentImages = document.querySelectorAll('.main-content img');
             
             contentImages.forEach(img => {
-                // Adiciona a checagem para NÃO adicionar lightbox em imagens de gráfico (GIFs)
-                // E também na nova foto de perfil
                 if (!img.src.endsWith('.gif') && !img.classList.contains('profile-pic')) {
                     img.addEventListener('click', () => {
                         lightboxImg.src = img.src; 
@@ -1439,9 +1459,7 @@ function criarGraficoDispersaoCurtidas() {
         }
         
         
-        // --- LÓGICA DE COMPARTILHAMENTO (Existente) ---
-        // (seu código de compartilhamento continua aqui...)
-        
+        // --- LÓGICA DE COMPARTILHAMENTO (Existente, sem alterações) ---
         const shareBtn = document.getElementById('mobileShareBtn');
         
         if (shareBtn) {
@@ -1467,6 +1485,116 @@ function criarGraficoDispersaoCurtidas() {
         }
         
     });
+
+    //==================================================================
+// --- INÍCIO: CÓDIGO DA NUVEM DE PALAVRAS ---
+//==================================================================
+
+// Variável de controle para não carregar a nuvem várias vezes
+let nuvensIniciadas = false;
+
+/**
+ * Lista de "stop words" em português.
+ * Palavras muito comuns que queremos ignorar na nuvem.
+ */
+const stopWordsPt = new Set([
+    'de', 'a', 'o', 'que', 'e', 'do', 'da', 'em', 'um', 'para', 'é', 'com', 'não', 'uma',
+    'os', 'na', 'se', 'as', 'por', 'mais', 'eu', 'como', 'também', 'mas', 'ao', 'ele',
+    'do', 'dele', 'dela', 'foi', 'meu', 'minha', 'me', 'nem', 'no', 'nos', 'neste',
+    'nesta', 'sem', 'só', 'ou', 'quando', 'ser', 'ter', 'este', 'esta', 'já', 'qual',
+    'quem', 'seja', 'sempre', 'são', 'seu', 'sua', 'isto', 'isso', 'aquilo',
+    // Palavras comuns do texto.txt que poluem a nuvem
+    'castelo', 'disse', 'senhor', 'lhe', 'vi', 'era', 'estava', 'bem', 'lá', 'foi', 'que'
+]);
+
+/**
+ * Processa o texto bruto do arquivo .txt
+ * 1. Limpa (minúsculas, remove pontuação/números)
+ * 2. Remove stop words
+ * 3. Conta a frequência
+ * 4. Formata para a biblioteca WordCloud2
+ */
+function processarTexto(texto) {
+    const frequencia = new Map();
+
+    // 1. Limpa o texto
+    const palavras = texto.toLowerCase()
+                        .replace(/[\.,:;!?(){}\[\]"'-]/g, ' ') // Remove pontuação
+                        .replace(/\d+/g, ' ') // Remove números
+                        .split(/\s+/); // Divide em palavras
+
+    // 2. Conta a frequência, ignorando stop words
+    for (const palavra of palavras) {
+        if (palavra.length > 3 && !stopWordsPt.has(palavra)) { // Ignora palavras curtas
+            const contagem = frequencia.get(palavra) || 0;
+            frequencia.set(palavra, contagem + 1);
+        }
+    }
+
+    // 3. Converte o Map para o formato do WordCloud2.js: [['palavra', 10], ['outra', 8]]
+    const listaFormatoNuvem = Array.from(frequencia.entries());
+    
+    // 4. Ordena e pega as Top 100 palavras (melhora a performance)
+    return listaFormatoNuvem.sort((a, b) => b[1] - a[1]).slice(0, 100);
+}
+
+
+/**
+ * Função principal:
+ * 1. Busca o arquivo texto.txt
+ * 2. Processa o texto
+ * 3. Desenha as nuvens nos canvas 'nuvemPositiva' e 'nuvemNegativa'
+ */
+async function iniciarNuvemDePalavras() {
+    try {
+        // 1. Busca o arquivo de texto
+        const response = await fetch('texto.txt'); // O NOME DO ARQUIVO
+        if (!response.ok) {
+            throw new Error('Falha ao carregar texto.txt');
+        }
+        const texto = await response.text();
+        
+        // 2. Processa o texto
+        const dadosNuvem = processarTexto(texto);
+
+        if (dadosNuvem.length === 0) {
+            console.warn("Nenhum dado para a nuvem de palavras após processamento.");
+            return;
+        }
+
+        // 3. Configurações da Nuvem
+        const opcoesNuvem = {
+            list: dadosNuvem,
+            gridSize: 10,       // Espaçamento
+            weightFactor: 6,    // Tamanho da fonte
+            fontFamily: 'Inter, sans-serif',
+            color: 'random-dark', // Cores
+            backgroundColor: '#FFFFFF', // Fundo
+            rotateRatio: 0.3,   // 30% das palavras rotacionam
+            minSize: 8          // Menor tamanho de fonte
+        };
+
+        // 4. Renderiza as DUAS nuvens (com os mesmos dados)
+        const canvasPositiva = document.getElementById('nuvemPositiva');
+        const canvasNegativa = document.getElementById('nuvemNegativa');
+
+        if (canvasPositiva) {
+            WordCloud2(canvasPositiva, opcoesNuvem);
+        }
+        if (canvasNegativa) {
+            // Para diferenciar, mudamos a cor da segunda nuvem
+            WordCloud2(canvasNegativa, { ...opcoesNuvem, color: 'random-light', backgroundColor: '#fafafa' });
+        }
+
+    } catch (error) {
+        console.error('Erro ao criar nuvem de palavras:', error);
+    }
+}
+
+//==================================================================
+// --- FIM: CÓDIGO DA NUVEM DE PALAVRAS ---
+//==================================================================
+
 </script>
 
 </body>
