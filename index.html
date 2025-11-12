@@ -520,6 +520,7 @@
 .destaque-grafico .card-header h3 {
     color: var(--color-primary);
     font-size: 1.25rem;
+    font-weight: 600;
 }
 
 .destaque-grafico .chart-container {
@@ -533,6 +534,46 @@
 }
 .chart-container {
     height: 360px;
+}
+
+/* === Grid para imagens de categorias === */
+.img-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Cada item individual */
+.img-item {
+  flex: 1;
+  text-align: center;
+}
+
+/* Imagens com a mesma largura e estilo dos gráficos */
+.img-item img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  background: #fff;
+  transition: transform 0.3s ease;
+}
+
+.img-item img:hover {
+  transform: scale(1.02);
+}
+
+/* Layout lado a lado em telas grandes */
+@media (min-width: 992px) {
+  .img-grid {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .img-item {
+    max-width: 32%;
+  }
 }
 
 
@@ -643,7 +684,7 @@
 </div>
                             
                             <!-- CORREÇÃO: card contendo o gráfico de dispersão -->
-                            <div class="card">
+                            <div class="card full-width destaque-grafico">
                                 <div class="card-header"><h3>Postagens mais comentadas</h3></div>
                                 <div class="card-body">
                                     <p>Gráfico: Número de comentários por categoria (Dispersão)</p>
@@ -657,37 +698,63 @@
                                         As cores diferenciam as categorias de conteúdo.
                                     </p>
 
-                                    <h4>Autenticidade</h4>
-                                    <img src="pic.jpg" alt="Post Autenticidade" loading="lazy">
-                                    <p>Por que foi mais comentada - Autenticidade (...)</p>
+                                    <div class="img-grid">
+  <div class="img-item">
+    <h4>Autenticidade</h4>
+    <img src="pic.jpg" alt="Post Autenticidade" loading="lazy">
+    <p>Por que foi mais curtida - Autenticidade (...)</p>
+  </div>
 
-                                    <h4>Competência</h4>
-                                    <img src="pic.jpg" alt="Post Competência" loading="lazy">
-                                    <p>Por que foi mais comentada - Competência (...)</p>
+  <div class="img-item">
+    <h4>Competência</h4>
+    <img src="pic.jpg" alt="Post Competência" loading="lazy">
+    <p>Por que foi mais curtida - Competência (...)</p>
+  </div>
 
-                                    <h4>Humanização</h4>
-                                    <img src="pic.jpg" alt="Post Humanização" loading="lazy">
-                                    <p>Por que foi mais comentada - Humanização (...)</p>
+  <div class="img-item">
+    <h4>Humanização</h4>
+    <img src="pic.jpg" alt="Post Humanização" loading="lazy">
+    <p>Por que foi mais curtida - Humanização (...)</p>
+  </div>
+</div>
                                 </div>
                             </div>
-
-                            <div class="card">
+                            
+                            <div class="card full-width destaque-grafico">
                                 <div class="card-header"><h3>Postagens mais curtidas</h3></div>
                                 <div class="card-body">
                                     <p>Gráfico: Número de curtidas por categoria (Dispersão)</p>
-                                    <img src="pic.jpg" alt="Curtidas por categoria" loading="lazy">
-                                    <h4>Autenticidade</h4>
-                                    <img src="pic.jpg" alt="Post Autenticidade" loading="lazy">
-                                    <p>Por que foi mais curtida - Autenticidade (...)</p>
-                                    <h4>Competência</h4>
-                                    <img src="pic.jpg" alt="Post Competência" loading="lazy">
-                                    <p>Por que foi mais curtida - Competência (...)</p>
-                                    <h4>Humanização</h4>
-                                    <img src="pic.jpg" alt="Post Humanização" loading="lazy">
-                                    <p>Por que foi mais curtida - Humanização (...)</p>
+                                    <div class="chart-container">
+                                        <canvas id="graficoDispersaoCurtidas"></canvas>
+                                    </div>
+
+                                    <p style="margin-top:1rem; color: var(--color-text-secondary); font-size: 0.9rem;">
+                                        Cada ponto representa uma postagem. O eixo X indica a data, e o eixo Y mostra o número de comentários.
+                                        As cores diferenciam as categorias de conteúdo.
+                                    </p>
+
+                                    <div class="img-grid">
+  <div class="img-item">
+    <h4>Autenticidade</h4>
+    <img src="pic.jpg" alt="Post Autenticidade" loading="lazy">
+    <p>Por que foi mais curtida - Autenticidade (...)</p>
+  </div>
+
+  <div class="img-item">
+    <h4>Competência</h4>
+    <img src="pic.jpg" alt="Post Competência" loading="lazy">
+    <p>Por que foi mais curtida - Competência (...)</p>
+  </div>
+
+  <div class="img-item">
+    <h4>Humanização</h4>
+    <img src="pic.jpg" alt="Post Humanização" loading="lazy">
+    <p>Por que foi mais curtida - Humanização (...)</p>
+  </div>
+</div>
                                 </div>
                             </div>
-                            <div class="card">
+                            <div class="card full-width destaque-grafico">
                                 <div class="card-header"><h3>Análise de Discurso</h3></div>
                                 <div class="card-body">
                                     <p>Explicar (...)</p>
@@ -696,7 +763,7 @@
                                     <p>Comentário sobre a nuvem de palavras 1</p>
                                 </div>
                             </div>
-                            <div class="card">
+                            <div class="card full-width destaque-grafico">
                                 <div class="card-header"><h3>Comportamento da Audiência</h3></div>
                                 <div class="card-body">
                                     <p>Explicar (...)</p>
@@ -1158,6 +1225,121 @@ function criarGraficoDispersaoComentarios() {
 }
 
 
+// --- NOVO: Função para criar o gráfico de dispersão de curtidas ---
+let graficoDispersaoCurtidasChart = null;
+
+function criarGraficoDispersaoCurtidas() {
+    const ctx = document.getElementById('graficoDispersaoCurtidas');
+    if (!ctx) return;
+
+    if (graficoDispersaoCurtidasChart) graficoDispersaoCurtidasChart.destroy();
+
+    // Dados agrupados por categoria
+    const autenticidade = [
+        { x: '2025-11-05', y: 524 },
+        { x: '2025-11-08', y: 350 },
+        { x: '2025-11-09', y: 534 }
+    ];
+
+    const competencia = [
+        { x: '2025-11-05', y: 460 },
+        { x: '2025-11-08', y: 322 },
+        { x: '2025-11-09', y: 360 },
+        { x: '2025-11-10', y: 168 }
+    ];
+
+    const humanizacao = [
+        { x: '2025-11-05', y: 1460 },
+        { x: '2025-11-06', y: 924 },
+        { x: '2025-11-07', y: 1080 },
+        { x: '2025-11-09', y: 889 }
+    ];
+
+    graficoDispersaoCurtidasChart = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+            datasets: [
+                {
+                    label: 'Autenticidade',
+                    data: autenticidade,
+                    backgroundColor: 'rgba(37, 99, 235, 0.8)', // azul
+                    borderColor: '#2563eb',
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                },
+                {
+                    label: 'Competência',
+                    data: competencia,
+                    backgroundColor: 'rgba(75, 85, 99, 0.8)', // cinza
+                    borderColor: '#4b5563',
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                },
+                {
+                    label: 'Humanização',
+                    data: humanizacao,
+                    backgroundColor: 'rgba(239, 68, 68, 0.8)', // vermelho
+                    borderColor: '#ef4444',
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 1000,
+                easing: 'easeOutQuart'
+            },
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day',
+                        tooltipFormat: 'dd/MM/yyyy',
+                        displayFormats: { day: 'dd/MM' }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Data',
+                        color: '#374151',
+                        font: { weight: '600' }
+                    },
+                    grid: { color: 'rgba(209, 213, 219, 0.2)' },
+                    ticks: { color: '#6b7280' }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Curtidas',
+                        color: '#374151',
+                        font: { weight: '600' }
+                    },
+                    grid: { color: 'rgba(209, 213, 219, 0.2)' },
+                    ticks: { color: '#6b7280' }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#374151', font: { size: 13 } }
+                },
+                tooltip: {
+                    backgroundColor: '#111827',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    cornerRadius: 6,
+                    callbacks: {
+                        label: ctx => 
+                            ` ${ctx.dataset.label}: ${ctx.parsed.y} curtidas em ${new Date(ctx.parsed.x).toLocaleDateString('pt-BR')}`
+                    }
+                }
+            }
+        }
+    });
+}
 
 
 // --- FIM DA NOVA FUNÇÃO ---
@@ -1186,6 +1368,7 @@ function criarGraficoDispersaoComentarios() {
                     if (targetId === 'Categoria1') {
                         criarGraficoCategorias();
                         criarGraficoDispersaoComentarios();
+                        criarGraficoDispersaoCurtidas();
                     }
                     
                     // --- NOVO: Gatilho para o gráfico de radar ---
@@ -1207,6 +1390,7 @@ function criarGraficoDispersaoComentarios() {
             if (startId === 'Categoria1') {
                 criarGraficoCategorias();
                 criarGraficoDispersaoComentarios();
+                criarGraficoDispersaoCurtidas();
             }
             if (startId === 'Categoria3') criarGraficoRadar();
         }
