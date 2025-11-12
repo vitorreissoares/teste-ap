@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Adapter para usar escala de tempo com Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
     
     <style>
         /* --- Variáveis de Design (Estilo profissional) --- */
@@ -193,12 +195,16 @@
         .card-body p { margin-bottom: 1rem; }
 
         
-        /* --- INÍCIO: Correção do Tamanho do Gráfico --- */
-.chart-container {
-    position: relative; /* Essencial para o Chart.js funcionar bem */
-    height: 300px;  /* <-- AQUI ESTÁ A MÁGICA! Defina uma altura fixa */
-    width: 100%;    /* Garante que ocupe a largura do card */
+.chart-container, .chart-container-radar {
+    position: relative;
+    height: 340px;
+    width: 100%;
+    padding: 0.5rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
+
 /* --- FIM: Correção do Tamanho do Gráfico --- */
         
         
@@ -498,13 +504,37 @@
         }
     }
 
-    /* --- INÍCIO: Correção do Tamanho do Gráfico RADAR --- */
-.chart-container-radar {
-    position: relative;
-    height: 350px; /* Altura boa para um card do grid */
-    width: 100%;
+/* --- Destaque visual para o gráfico principal da aba de conteúdo --- */
+.destaque-grafico {
+    border: 1px solid var(--color-primary-light);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.08);
+    transform: scale(1.01);
+    transition: all 0.3s ease;
 }
+
+.destaque-grafico:hover {
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.12);
+    transform: scale(1.015);
+}
+
+.destaque-grafico .card-header h3 {
+    color: var(--color-primary);
+    font-size: 1.25rem;
+}
+
+.destaque-grafico .chart-container {
+    height: 400px; /* Maior destaque visual */
+}
+
 /* --- FIM: Correção do Tamanho do Gráfico RADAR --- */
+
+#graficoDispersaoComentarios {
+    margin-top: 10px;
+}
+.chart-container {
+    height: 360px;
+}
+
 
     </style>
 </head>
@@ -599,7 +629,8 @@
                     <summary class="accordion-header">Instagram</summary>
                     <div class="accordion-content">
                         <div class="card-grid">
-                            <div class="card">
+                            <div class="card full-width destaque-grafico">
+
     <div class="card-header"><h3>Distribuição por Categoria</h3></div>
     <div class="card-body">
         <p>Gráfico: Distribuição de postagens por categoria</p>
@@ -610,22 +641,36 @@
         
     </div>
 </div>
+                            
+                            <!-- CORREÇÃO: card contendo o gráfico de dispersão -->
                             <div class="card">
                                 <div class="card-header"><h3>Postagens mais comentadas</h3></div>
                                 <div class="card-body">
                                     <p>Gráfico: Número de comentários por categoria (Dispersão)</p>
-                                    <img src="pic.jpg" alt="Comentários por categoria" loading="lazy">
+
+                                    <div class="chart-container">
+                                        <canvas id="graficoDispersaoComentarios"></canvas>
+                                    </div>
+
+                                    <p style="margin-top:1rem; color: var(--color-text-secondary); font-size: 0.9rem;">
+                                        Cada ponto representa uma postagem. O eixo X indica a data, e o eixo Y mostra o número de comentários.
+                                        As cores diferenciam as categorias de conteúdo.
+                                    </p>
+
                                     <h4>Autenticidade</h4>
                                     <img src="pic.jpg" alt="Post Autenticidade" loading="lazy">
                                     <p>Por que foi mais comentada - Autenticidade (...)</p>
+
                                     <h4>Competência</h4>
                                     <img src="pic.jpg" alt="Post Competência" loading="lazy">
                                     <p>Por que foi mais comentada - Competência (...)</p>
+
                                     <h4>Humanização</h4>
                                     <img src="pic.jpg" alt="Post Humanização" loading="lazy">
                                     <p>Por que foi mais comentada - Humanização (...)</p>
                                 </div>
                             </div>
+
                             <div class="card">
                                 <div class="card-header"><h3>Postagens mais curtidas</h3></div>
                                 <div class="card-body">
@@ -832,133 +877,290 @@
     // --- NOVO: Instância do Gráfico de Radar ---
     let graficoRadarChart = null;
 
-    // --- Função do Gráfico de Barras (Existente) ---
     function criarGraficoCategorias() {
-        const ctx = document.getElementById('graficoCategorias');
-        if (!ctx) return; 
+    const ctx = document.getElementById('graficoCategorias');
+    if (!ctx) return;
 
-        if (graficoCategoriasChart) {
-            graficoCategoriasChart.destroy();
-        }
+    if (graficoCategoriasChart) graficoCategoriasChart.destroy();
 
-        graficoCategoriasChart = new Chart(ctx, {
-            type: 'bar', 
-            data: {
-                labels: ['Autenticidade', 'Competência', 'Humanização'],
-                datasets: [{
-                    label: '% de Distribuição',
-                    data: [50, 25, 25], 
-                    backgroundColor: ['#2563eb', '#4b5563', '#dbeafe'],
-                    borderWidth: 0
-                }]
+    graficoCategoriasChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Autenticidade', 'Competência', 'Humanização'],
+            datasets: [{
+                label: '% de Distribuição',
+                data: [50, 25, 25],
+                backgroundColor: [
+                    'rgba(37, 99, 235, 0.8)',
+                    'rgba(75, 85, 99, 0.8)',
+                    'rgba(147, 197, 253, 0.8)'
+                ],
+                borderRadius: 10,
+                borderSkipped: false,
+                hoverBackgroundColor: [
+                    'rgba(37, 99, 235, 1)',
+                    'rgba(75, 85, 99, 1)',
+                    'rgba(147, 197, 253, 1)'
+                ],
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 1000,
+                easing: 'easeOutQuart'
             },
-            options: {
-                indexAxis: 'y', 
-                responsive: true,
-                maintainAspectRatio: false, // Correto para o container de altura fixa
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) { return ' ' + context.raw + '%'; }
-                        }
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: '#111827',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    cornerRadius: 6,
+                    callbacks: {
+                        label: ctx => ` ${ctx.raw}%`
                     }
                 },
-                scales: {
-                    x: { 
-                        beginAtZero: true, max: 100,
-                        ticks: {
-                            callback: function(value) { return value + '%'; }
-                        }
+                title: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: {
+                        drawBorder: false,
+                        color: 'rgba(209, 213, 219, 0.3)'
                     },
-                    y: { 
-                        grid: { display: false }
+                    ticks: {
+                        color: '#6b7280',
+                        callback: v => v + '%'
+                    }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: {
+                        color: '#111827',
+                        font: { weight: '600' }
                     }
                 }
             }
-        });
-    }
-
-    // --- NOVO: Função para criar o Gráfico de Radar ---
-    function criarGraficoRadar() {
-        const ctxRadar = document.getElementById('graficoRadar');
-        if (!ctxRadar) return;
-
-        // Destrói o gráfico anterior, se existir
-        if (graficoRadarChart) {
-            graficoRadarChart.destroy();
         }
+    });
+}
 
-        // Cor primária (azul) e uma cor de "alerta" (vermelho)
-        const corAzul = '#2563eb';
-        const corVermelha = '#ef4444';
+function criarGraficoRadar() {
+    const ctx = document.getElementById('graficoRadar');
+    if (!ctx) return;
 
-        graficoRadarChart = new Chart(ctxRadar, {
-            type: 'radar', // <-- O tipo de gráfico
-            data: {
-                labels: ['Autenticidade', 'Competência', 'Humanização'],
-                datasets: [
-                    {
-                        label: 'Positivos',
-                        data: [75, 71, 76], // Seus dados Positivos
-                        fill: true,
-                        backgroundColor: 'rgba(37, 99, 235, 0.2)', // Azul com transparência
-                        borderColor: corAzul,
-                        pointBackgroundColor: corAzul,
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: corAzul
-                    },
-                    {
-                        label: 'Negativos',
-                        data: [25, 29, 24], // Seus dados Negativos
-                        fill: true,
-                        backgroundColor: 'rgba(239, 68, 68, 0.2)', // Vermelho com transparência
-                        borderColor: corVermelha,
-                        pointBackgroundColor: corVermelha,
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: corVermelha
-                    }
-                ]
+    if (graficoRadarChart) graficoRadarChart.destroy();
+
+    graficoRadarChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['Autenticidade', 'Competência', 'Humanização'],
+            datasets: [
+                {
+                    label: 'Positivos',
+                    data: [75, 71, 76],
+                    fill: true,
+                    backgroundColor: 'rgba(37, 99, 235, 0.25)',
+                    borderColor: '#2563eb',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#2563eb',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    tension: 0.3
+                },
+                {
+                    label: 'Negativos',
+                    data: [25, 29, 24],
+                    fill: true,
+                    backgroundColor: 'rgba(239, 68, 68, 0.25)',
+                    borderColor: '#ef4444',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#ef4444',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 1200,
+                easing: 'easeOutCubic'
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false, // Essencial para o container de altura fixa
-                scales: {
-                    r: { // 'r' é o eixo radial (os números)
-                        beginAtZero: true,
-                        max: 100, // Nosso dado vai até 100%
-                        ticks: {
-                            // Adiciona o '%' nos rótulos do eixo
-                            callback: function(value) {
-                                return value + '%';
-                            },
-                            backdropColor: 'rgba(255, 255, 255, 0.75)' // Fundo para os números
-                        },
-                        pointLabels: {
-                            font: { size: 13, weight: '500' } // Estilo de "Autenticidade", etc.
-                        }
+            scales: {
+                r: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: {
+                        color: 'rgba(209, 213, 219, 0.3)'
+                    },
+                    angleLines: {
+                        color: 'rgba(209, 213, 219, 0.2)'
+                    },
+                    ticks: {
+                        backdropColor: 'transparent',
+                        color: '#6b7280',
+                        callback: v => v + '%'
+                    },
+                    pointLabels: {
+                        color: '#111827',
+                        font: { size: 14, weight: '600' }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#374151',
+                        font: { size: 13 }
                     }
                 },
-                plugins: {
-                    tooltip: {
-                        // Personaliza o tooltip para mostrar o '%'
-                        callbacks: {
-                            label: function(context) {
-                                // Ex: "Positivos: 75%"
-                                return ' ' + context.dataset.label + ': ' + context.raw + '%';
-                            }
-                        }
-                    },
-                    legend: {
-                        position: 'bottom' // Coloca a legenda (Positivos/Negativos) embaixo
+                tooltip: {
+                    backgroundColor: '#111827',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    cornerRadius: 6,
+                    callbacks: {
+                        label: ctx => ` ${ctx.dataset.label}: ${ctx.raw}%`
                     }
                 }
             }
-        });
-    }
-    // --- FIM DA NOVA FUNÇÃO ---
+        }
+    });
+}
+
+// --- NOVO: Função para criar o gráfico de dispersão de comentários ---
+let graficoDispersaoComentariosChart = null;
+
+function criarGraficoDispersaoComentarios() {
+    const ctx = document.getElementById('graficoDispersaoComentarios');
+    if (!ctx) return;
+
+    if (graficoDispersaoComentariosChart) graficoDispersaoComentariosChart.destroy();
+
+    // Dados agrupados por categoria
+    const autenticidade = [
+        { x: '2025-11-05', y: 524 },
+        { x: '2025-11-08', y: 350 },
+        { x: '2025-11-09', y: 534 }
+    ];
+
+    const competencia = [
+        { x: '2025-11-05', y: 460 },
+        { x: '2025-11-08', y: 322 },
+        { x: '2025-11-09', y: 360 },
+        { x: '2025-11-10', y: 168 }
+    ];
+
+    const humanizacao = [
+        { x: '2025-11-05', y: 1460 },
+        { x: '2025-11-06', y: 924 },
+        { x: '2025-11-07', y: 1080 },
+        { x: '2025-11-09', y: 889 }
+    ];
+
+    graficoDispersaoComentariosChart = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+            datasets: [
+                {
+                    label: 'Autenticidade',
+                    data: autenticidade,
+                    backgroundColor: 'rgba(37, 99, 235, 0.8)', // azul
+                    borderColor: '#2563eb',
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                },
+                {
+                    label: 'Competência',
+                    data: competencia,
+                    backgroundColor: 'rgba(75, 85, 99, 0.8)', // cinza
+                    borderColor: '#4b5563',
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                },
+                {
+                    label: 'Humanização',
+                    data: humanizacao,
+                    backgroundColor: 'rgba(239, 68, 68, 0.8)', // vermelho
+                    borderColor: '#ef4444',
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 1000,
+                easing: 'easeOutQuart'
+            },
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day',
+                        tooltipFormat: 'dd/MM/yyyy',
+                        displayFormats: { day: 'dd/MM' }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Data',
+                        color: '#374151',
+                        font: { weight: '600' }
+                    },
+                    grid: { color: 'rgba(209, 213, 219, 0.2)' },
+                    ticks: { color: '#6b7280' }
+                },
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Comentários',
+                        color: '#374151',
+                        font: { weight: '600' }
+                    },
+                    grid: { color: 'rgba(209, 213, 219, 0.2)' },
+                    ticks: { color: '#6b7280' }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#374151', font: { size: 13 } }
+                },
+                tooltip: {
+                    backgroundColor: '#111827',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    cornerRadius: 6,
+                    callbacks: {
+                        label: ctx => 
+                            ` ${ctx.dataset.label}: ${ctx.parsed.y} comentários em ${new Date(ctx.parsed.x).toLocaleDateString('pt-BR')}`
+                    }
+                }
+            }
+        }
+    });
+}
+
+
+
+
+// --- FIM DA NOVA FUNÇÃO ---
 
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -983,6 +1185,7 @@
                     // --- ATUALIZAÇÃO AQUI ---
                     if (targetId === 'Categoria1') {
                         criarGraficoCategorias();
+                        criarGraficoDispersaoComentarios();
                     }
                     
                     // --- NOVO: Gatilho para o gráfico de radar ---
@@ -995,6 +1198,18 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         });
+        
+        // Também inicializa gráficos caso a aba já esteja visível ao carregar
+        // (ex: se você abrir direto em Categoria1 por algum motivo)
+        const activeTab = document.querySelector('.nav-item.active');
+        if (activeTab) {
+            const startId = activeTab.getAttribute('data-target');
+            if (startId === 'Categoria1') {
+                criarGraficoCategorias();
+                criarGraficoDispersaoComentarios();
+            }
+            if (startId === 'Categoria3') criarGraficoRadar();
+        }
         
         
         // --- LÓGICA DO LIGHTBOX (Existente) ---
