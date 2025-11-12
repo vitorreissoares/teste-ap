@@ -497,6 +497,15 @@
             display: none;
         }
     }
+
+    /* --- INÍCIO: Correção do Tamanho do Gráfico RADAR --- */
+.chart-container-radar {
+    position: relative;
+    height: 350px; /* Altura boa para um card do grid */
+    width: 100%;
+}
+/* --- FIM: Correção do Tamanho do Gráfico RADAR --- */
+
     </style>
 </head>
 <body>
@@ -749,13 +758,20 @@
                     <summary class="accordion-header">Instagram</summary>
                     <div class="accordion-content"> 
                         <div class="card-grid">
+                            
                             <div class="card">
-                                <div class="card-header"><h3>O Radar da Marca Humana na Política</h3></div>
-                                <div class="card-body">
-                                    <img src="pic2.gif" alt="Radar da Marca Humana" loading="lazy">
-                                    <p>comentário sobre o radar (...)</p>
-                                </div>
-                            </div>
+    <div class="card-header"><h3>O Radar da Marca Humana na Política</h3></div>
+    <div class="card-body">
+        <p>Visão de 360 graus da percepção da marca</p>
+        
+        <div class="chart-container-radar">
+            <canvas id="graficoRadar"></canvas>
+        </div>
+        
+    </div>
+</div>
+                            
+
                             <div class="card">
                                 <div class="card-header"><h3>Indicador de Desempenho Político (IDPMS)</h3></div>
                                 <div class="card-body">
@@ -810,82 +826,143 @@
     </div>
     
     <script>
-    // --- NOVO: Variável para guardar a instância do gráfico ---
-    // Isso nos permite destruir o gráfico antigo antes de criar um novo
+    // --- Instância do Gráfico de Barras (Existente) ---
     let graficoCategoriasChart = null;
+    
+    // --- NOVO: Instância do Gráfico de Radar ---
+    let graficoRadarChart = null;
 
-    // --- NOVO: Função para criar o gráfico de barras ---
+    // --- Função do Gráfico de Barras (Existente) ---
     function criarGraficoCategorias() {
         const ctx = document.getElementById('graficoCategorias');
-        
-        // Se o canvas não for encontrado, não faz nada
         if (!ctx) return; 
 
-        // Destrói o gráfico anterior, se ele existir
-        // Isso previne bugs e lentidão ao clicar na aba várias vezes
         if (graficoCategoriasChart) {
             graficoCategoriasChart.destroy();
         }
 
-        // Cria a nova instância do gráfico
         graficoCategoriasChart = new Chart(ctx, {
-            type: 'bar', // Define o tipo como gráfico de barras
+            type: 'bar', 
             data: {
                 labels: ['Autenticidade', 'Competência', 'Humanização'],
                 datasets: [{
                     label: '% de Distribuição',
-                    data: [50, 25, 25], // Seus dados: 50%, 25%, 25%
-                    backgroundColor: [
-                        '#2563eb', // Seu --color-primary
-                        '#4b5563', // Seu --color-text-secondary
-                        '#dbeafe'  // Seu --color-primary-light
-                    ],
-                    borderWidth: 0 // Remove a borda das barras
+                    data: [50, 25, 25], 
+                    backgroundColor: ['#2563eb', '#4b5563', '#dbeafe'],
+                    borderWidth: 0
                 }]
             },
             options: {
-                indexAxis: 'y', // <-- Isso o torna um gráfico de barras HORIZONTAL
-                responsive: true, // O gráfico se ajusta ao tamanho do card
-                maintainAspectRatio: false, // Ajuda na responsividade dentro do card
+                indexAxis: 'y', 
+                responsive: true,
+                maintainAspectRatio: false, // Correto para o container de altura fixa
                 plugins: {
-                    legend: {
-                        display: false // Esconde a legenda, já que só temos um tipo de dado
-                    },
+                    legend: { display: false },
                     tooltip: {
-                        // Personaliza o "tooltip" (caixa que aparece ao passar o mouse)
                         callbacks: {
-                            label: function(context) {
-                                // Adiciona o símbolo de '%'
-                                return ' ' + context.raw + '%';
-                            }
+                            label: function(context) { return ' ' + context.raw + '%'; }
                         }
                     }
                 },
                 scales: {
-                    x: { // Eixo X (agora na horizontal, mostrando os valores)
-                        beginAtZero: true, // Começa do zero
-                        max: 100, // Eixo vai até 100
+                    x: { 
+                        beginAtZero: true, max: 100,
                         ticks: {
-                            // Adiciona o '%' no eixo
-                            callback: function(value) {
-                                return value + '%';
-                            }
+                            callback: function(value) { return value + '%'; }
                         }
                     },
-                    y: { // Eixo Y (onde ficam as categorias)
-                        grid: {
-                            display: false // Remove as linhas de grade do fundo
-                        }
+                    y: { 
+                        grid: { display: false }
                     }
                 }
             }
         });
     }
 
+    // --- NOVO: Função para criar o Gráfico de Radar ---
+    function criarGraficoRadar() {
+        const ctxRadar = document.getElementById('graficoRadar');
+        if (!ctxRadar) return;
+
+        // Destrói o gráfico anterior, se existir
+        if (graficoRadarChart) {
+            graficoRadarChart.destroy();
+        }
+
+        // Cor primária (azul) e uma cor de "alerta" (vermelho)
+        const corAzul = '#2563eb';
+        const corVermelha = '#ef4444';
+
+        graficoRadarChart = new Chart(ctxRadar, {
+            type: 'radar', // <-- O tipo de gráfico
+            data: {
+                labels: ['Autenticidade', 'Competência', 'Humanização'],
+                datasets: [
+                    {
+                        label: 'Positivos',
+                        data: [75, 71, 76], // Seus dados Positivos
+                        fill: true,
+                        backgroundColor: 'rgba(37, 99, 235, 0.2)', // Azul com transparência
+                        borderColor: corAzul,
+                        pointBackgroundColor: corAzul,
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: corAzul
+                    },
+                    {
+                        label: 'Negativos',
+                        data: [25, 29, 24], // Seus dados Negativos
+                        fill: true,
+                        backgroundColor: 'rgba(239, 68, 68, 0.2)', // Vermelho com transparência
+                        borderColor: corVermelha,
+                        pointBackgroundColor: corVermelha,
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: corVermelha
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Essencial para o container de altura fixa
+                scales: {
+                    r: { // 'r' é o eixo radial (os números)
+                        beginAtZero: true,
+                        max: 100, // Nosso dado vai até 100%
+                        ticks: {
+                            // Adiciona o '%' nos rótulos do eixo
+                            callback: function(value) {
+                                return value + '%';
+                            },
+                            backdropColor: 'rgba(255, 255, 255, 0.75)' // Fundo para os números
+                        },
+                        pointLabels: {
+                            font: { size: 13, weight: '500' } // Estilo de "Autenticidade", etc.
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        // Personaliza o tooltip para mostrar o '%'
+                        callbacks: {
+                            label: function(context) {
+                                // Ex: "Positivos: 75%"
+                                return ' ' + context.dataset.label + ': ' + context.raw + '%';
+                            }
+                        }
+                    },
+                    legend: {
+                        position: 'bottom' // Coloca a legenda (Positivos/Negativos) embaixo
+                    }
+                }
+            }
+        });
+    }
+    // --- FIM DA NOVA FUNÇÃO ---
+
 
     document.addEventListener('DOMContentLoaded', () => {
         
-        // --- LÓGICA DAS ABAS (Existente) ---
         const navItems = document.querySelectorAll('.nav-item');
         const tabContents = document.querySelectorAll('.tab-content');
         
@@ -903,14 +980,16 @@
                 if (targetContent) {
                     targetContent.style.display = 'block';
 
-                    // --- NOVO: CONDIÇÃO PARA CRIAR O GRÁFICO ---
-                    // Se a aba que acabamos de abrir for a "Categoria1",
-                    // chamamos a função para (re)desenhar o gráfico.
+                    // --- ATUALIZAÇÃO AQUI ---
                     if (targetId === 'Categoria1') {
                         criarGraficoCategorias();
                     }
-                    // --- FIM DA NOVA CONDIÇÃO ---
-
+                    
+                    // --- NOVO: Gatilho para o gráfico de radar ---
+                    if (targetId === 'Categoria3') {
+                        criarGraficoRadar();
+                    }
+                    // --- FIM DA ATUALIZAÇÃO ---
                 }
                 
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -919,6 +998,7 @@
         
         
         // --- LÓGICA DO LIGHTBOX (Existente) ---
+        // (seu código do lightbox continua aqui...)
         
         const lightbox = document.getElementById('imageLightbox');
         const lightboxImg = document.getElementById('lightboxImageSrc');
@@ -929,7 +1009,9 @@
             const contentImages = document.querySelectorAll('.main-content img');
             
             contentImages.forEach(img => {
-                if (!img.src.endsWith('.gif')) {
+                // Adiciona a checagem para NÃO adicionar lightbox em imagens de gráfico (GIFs)
+                // E também na nova foto de perfil
+                if (!img.src.endsWith('.gif') && !img.classList.contains('profile-pic')) {
                     img.addEventListener('click', () => {
                         lightboxImg.src = img.src; 
                         lightbox.classList.add('show'); 
@@ -959,6 +1041,7 @@
         
         
         // --- LÓGICA DE COMPARTILHAMENTO (Existente) ---
+        // (seu código de compartilhamento continua aqui...)
         
         const shareBtn = document.getElementById('mobileShareBtn');
         
