@@ -530,7 +530,8 @@
     font-weight: 600;
 }
 
-.destaque-grafico .chart-container {
+.destaque-grafico .chart-container,
+.destaque-grafico .chart-container-radar {
     height: 400px; /* Maior destaque visual */
 }
 
@@ -583,6 +584,27 @@
   }
 }
 
+/* --- INÍCIO: Estilo do Indicador do Radar --- */
+.indicator {
+    position: absolute;
+    top: 1rem; /* 16px */
+    right: 1.25rem; /* 20px */
+    z-index: 10; /* Garante que fique sobre o gráfico */
+    
+    font-size: 1rem; /* 16px */
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    
+    background: rgba(255, 255, 255, 0.7); /* Fundo branco semitransparente */
+    backdrop-filter: blur(4px); /* Efeito de vidro fosco */
+    -webkit-backdrop-filter: blur(4px);
+    
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem; /* 8px */
+    padding: 0.25rem 0.65rem; /* Espaçamento interno */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+/* --- FIM: Estilo do Indicador do Radar --- */
 
     </style>
 </head>
@@ -793,13 +815,15 @@
                 <details class="accordion-item accordion-plataforma open">
                     <summary class="accordion-header">Instagram</summary>
                     <div class="accordion-content">
-                        <div class="card full-width">
-                            <div class="card-header"><h3>Comportamento da Audiência (Série Histórica)</h3></div>
-                            <div class="card-body">
-                                <img src="pic.jpg" alt="Série histórica de sentimentos" loading="lazy">
-                                <p>Explicação breve(...)</p>
-                            </div>
-                        </div>
+                        <div class="card destaque-grafico">
+    <div class="card-header"><h3>Comportamento da Audiência (Série Histórica)</h3></div>
+    <div class="card-body">
+        <div class="chart-container">
+            <canvas id="graficoSentimentosTempo"></canvas>
+        </div>
+        <p>Explicação breve(...)</p>
+    </div>
+</div>
                         <div class="card-grid">
                             <div class="card">
                                 <div class="card-header"><h3>Confiança</h3></div>
@@ -878,12 +902,14 @@
                     <div class="accordion-content"> 
                         <div class="card-grid">
                             
-                            <div class="card">
-    <div class="card-header"><h3>O Radar da Marca Humana na Política</h3></div>
+                            <div class="card destaque-grafico"> <div class="card-header"><h3>O Radar da Marca Humana na Política</h3></div>
     <div class="card-body">
         <p>Visão de 360 graus da percepção da marca</p>
         
         <div class="chart-container-radar">
+            
+            <div class="indicator">PISM: 0.89254</div> 
+            
             <canvas id="graficoRadar"></canvas>
         </div>
         
@@ -891,13 +917,7 @@
 </div>
                             
 
-                            <div class="card">
-                                <div class="card-header"><h3>Indicador de Desempenho Político (IDPMS)</h3></div>
-                                <div class="card-body">
-                                    <img src="pic2.gif" alt="Indicador de Desempenho" loading="lazy">
-                                    <p>comentário sobre o indicador (...)</p>
-                                </div>
-                            </div>
+                            
                         </div>
                     </div> 
                 </details>
@@ -950,6 +970,13 @@
     
     // --- NOVO: Instância do Gráfico de Radar ---
     let graficoRadarChart = null;
+
+    // --- NOVOS GRÁFICOS DE DISPERSÃO ---
+    let graficoDispersaoComentariosChart = null;
+    let graficoDispersaoCurtidasChart = null;
+
+    // --- NOVO: GRÁFICO DE SÉRIE HISTÓRICA ---
+    let graficoSentimentosTempoChart = null;
 
     function criarGraficoCategorias() {
     const ctx = document.getElementById('graficoCategorias');
@@ -1047,9 +1074,9 @@ function criarGraficoRadar() {
                     borderColor: '#2563eb',
                     borderWidth: 2,
                     pointBackgroundColor: '#2563eb',
-                    pointRadius: 5,
+                    pointRadius: 2,
                     pointHoverRadius: 7,
-                    tension: 0.3
+                    tension: 0.0
                 },
                 {
                     label: 'Negativos',
@@ -1059,9 +1086,9 @@ function criarGraficoRadar() {
                     borderColor: '#ef4444',
                     borderWidth: 2,
                     pointBackgroundColor: '#ef4444',
-                    pointRadius: 5,
+                    pointRadius: 2,
                     pointHoverRadius: 7,
-                    tension: 0.3
+                    tension: 0.0
                 }
             ]
         },
@@ -1072,20 +1099,26 @@ function criarGraficoRadar() {
                 duration: 1200,
                 easing: 'easeOutCubic'
             },
+            // DEPOIS (Substitua pelo bloco abaixo)
             scales: {
                 r: {
                     beginAtZero: true,
                     max: 100,
+                    
+                    // --- MUDANÇAS AQUI ---
                     grid: {
-                        color: 'rgba(209, 213, 219, 0.3)'
+                        color: 'rgba(156, 163, 175, 0.5)', // 1. Cor mais escura
+                        circular: true                   // 2. Formato circular
                     },
                     angleLines: {
-                        color: 'rgba(209, 213, 219, 0.2)'
+                        color: 'rgba(156, 163, 175, 0.3)' // Linhas do centro (spokes) também mais escuras
                     },
+                    // --- FIM DAS MUDANÇAS ---
+                    
                     ticks: {
                         backdropColor: 'transparent',
                         color: '#6b7280',
-                        callback: v => v + '%'
+                        callback: (value) => (value / 100).toFixed(1)
                     },
                     pointLabels: {
                         color: '#111827',
@@ -1116,7 +1149,7 @@ function criarGraficoRadar() {
 }
 
 // --- NOVO: Função para criar o gráfico de dispersão de comentários ---
-let graficoDispersaoComentariosChart = null;
+
 
 function criarGraficoDispersaoComentarios() {
     const ctx = document.getElementById('graficoDispersaoComentarios');
@@ -1233,7 +1266,7 @@ function criarGraficoDispersaoComentarios() {
 
 
 // --- NOVO: Função para criar o gráfico de dispersão de curtidas ---
-let graficoDispersaoCurtidasChart = null;
+
 
 function criarGraficoDispersaoCurtidas() {
     const ctx = document.getElementById('graficoDispersaoCurtidas');
@@ -1386,7 +1419,12 @@ function criarGraficoDispersaoCurtidas() {
                             nuvensIniciadas = true; // (Corrigi o typo aqui também)
                         }
                     } 
-                    
+                    // ADICIONE ESTE BLOCO
+                    if (targetId === 'Categoria2') {
+                        criarGraficoSentimentosTempo();
+                    }
+                    // FIM DO BLOCO ADICIONADO
+
                     // --- NOVO: Gatilho para o gráfico de radar ---
                     if (targetId === 'Categoria3') {
                         criarGraficoRadar();
@@ -1417,7 +1455,13 @@ function criarGraficoDispersaoCurtidas() {
                     iniciarNuvemDePalavras();
                     nuvensIniciadas = true;
                 }
-            } // <-- A CHAVE QUE FALTAVA ESTÁ AQUI.
+            } 
+            
+            // ADICIONE ESTE BLOCO
+            if (startId === 'Categoria2') {
+                criarGraficoSentimentosTempo();
+            }
+            // FIM DO BLOCO ADICIONADO
             
             if (startId === 'Categoria3') {
                 criarGraficoRadar();
@@ -1600,6 +1644,140 @@ async function iniciarNuvemDePalavras() {
 //==================================================================
 // --- FIM: CÓDIGO DA NUVEM DE PALAVRAS ---
 //==================================================================
+
+// SUBSTITUA A FUNÇÃO 'criarGraficoSentimentosTempo' INTEIRA POR ESTA
+function criarGraficoSentimentosTempo() {
+    const ctx = document.getElementById('graficoSentimentosTempo');
+    if (!ctx) return;
+
+    // ✅ Se já existir um gráfico anterior, destrói corretamente
+    if (window.graficoSentimentosTempoChart instanceof Chart) {
+        window.graficoSentimentosTempoChart.destroy();
+    }
+
+    const labels = ['05/11', '06/11', '07/11', '08/11'];
+
+    // ✅ Cria o novo gráfico e armazena na variável global
+    window.graficoSentimentosTempoChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Confiança',
+                    data: [50, 55, 40, 70],
+                    borderColor: '#2563eb',
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                },
+                {
+                    label: 'Felicidade',
+                    data: [20, 12, 30, 10],
+                    borderColor: '#16a34a',
+                    backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                },
+                {
+                    label: 'Expectativa',
+                    data: [10, 5, 10, 5],
+                    borderColor: '#f97316',
+                    backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                },
+                {
+                    label: 'Surpresa',
+                    data: [10, 10, 5, 5],
+                    borderColor: '#facc15',
+                    backgroundColor: 'rgba(250, 204, 21, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                },
+                {
+                    label: 'Medo',
+                    data: [5, 10, 5, 5],
+                    borderColor: '#a855f7',
+                    backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                },
+                {
+                    label: 'Tristeza',
+                    data: [3, 3, 3, 1],
+                    borderColor: '#64748b',
+                    backgroundColor: 'rgba(100, 116, 139, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                },
+                {
+                    label: 'Raiva',
+                    data: [1, 1, 6, 1],
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                },
+                {
+                    label: 'Repulsa',
+                    data: [1, 1, 6, 3],
+                    borderColor: '#713f12',
+                    backgroundColor: 'rgba(113, 63, 18, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false, // ✅ Desativa animações contínuas
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 75,
+                    ticks: {
+                        color: '#6b7280',
+                        callback: (value) => value + '%'
+                    },
+                    grid: {
+                        color: 'rgba(209, 213, 219, 0.3)'
+                    }
+                },
+                x: {
+                    ticks: { color: '#6b7280' },
+                    grid: { display: false }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#374151',
+                        usePointStyle: true,
+                        boxWidth: 8
+                    }
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: '#111827',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    cornerRadius: 6,
+                    callbacks: {
+                        label: (context) => ` ${context.dataset.label}: ${context.raw}%`
+                    }
+                }
+            },
+            interaction: {
+                mode: 'index',
+                intersect: false
+            }
+        }
+    });
+}
 
 </script>
 
